@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl md:text-3xl">
-            🛒 Carrito de Compras
+            Carrito de Compras
         </h2>
     </x-slot>
 
@@ -43,12 +43,9 @@
 
         @empty
             <div class="text-center py-12">
-                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
                 <p class="text-gray-500 text-lg font-semibold">El carrito está vacío</p>
                 <a href="{{ route('tienda') }}" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition">
-                    🛍️ Ir a comprar
+                    Ir a comprar
                 </a>
             </div>
         @endforelse

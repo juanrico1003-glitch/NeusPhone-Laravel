@@ -19,7 +19,6 @@
                                 {{ $pedidosCount ?? 0 }}
                             </h3>
                         </div>
-                        <div class="text-5xl opacity-20">📦</div>
                     </div>
                 </div>
 
@@ -31,7 +30,6 @@
                                 {{ $serviciosCount ?? 0 }}
                             </h3>
                         </div>
-                        <div class="text-5xl opacity-20">🔧</div>
                     </div>
                 </div>
 
@@ -66,14 +64,6 @@
             </div>
 
             <!-- Recomendacion -->
-            <div class="bg-white rounded-3xl shadow p-8 text-center border border-gray-100">
-                <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                    🤖
-                </div>
-                <h3 class="text-2xl font-bold text-gray-800 mb-4">¿Necesitas ayuda para escoger tu próximo equipo?</h3>
-                <p class="text-gray-600 mb-6 max-w-2xl mx-auto">
-                    Recuerda que nuestro asistente virtual inteligente está disponible en la esquina inferior derecha de nuestra tienda en cualquier momento para analizar tus necesidades y recomendarte el mejor dispositivo de nuestro catálogo.
-                </p>
                 <a href="{{ route('tienda') }}" class="px-8 py-3 bg-[#004080] text-white rounded-full font-bold hover:bg-blue-800 hover:shadow-lg transition">
                     Volver a la Tienda
                 </a>

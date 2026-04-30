@@ -11,10 +11,11 @@
         <form method="GET" class="mb-6 flex gap-3">
             <select name="estado" class="border rounded p-2">
                 <option value="">Todos</option>
-                <option value="pendiente">Pendiente</option>
-                <option value="en proceso">En proceso</option>
-                <option value="listo">Listo</option>
-                <option value="entregado">Entregado</option>
+                <option value="pendiente" {{ request('estado') == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                <option value="en_revision" {{ request('estado') == 'en_revision' ? 'selected' : '' }}>En proceso / Revisión</option>
+                <option value="reparado" {{ request('estado') == 'reparado' ? 'selected' : '' }}>Reparado / Listo</option>
+                <option value="entregado" {{ request('estado') == 'entregado' ? 'selected' : '' }}>Entregado</option>
+                <option value="cancelado" {{ request('estado') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
             </select>
 
             <button class="bg-blue-600 text-white px-4 py-2 rounded">
@@ -51,7 +52,16 @@
                             </td>
 
                             <td class="p-3 font-semibold">
-                                {{ $solicitud->estado }}
+                                @php
+                                    $estadosLabel = [
+                                        'pendiente' => 'Pendiente',
+                                        'en_revision' => 'En proceso / Revisión',
+                                        'reparado' => 'Reparado / Listo',
+                                        'entregado' => 'Entregado',
+                                        'cancelado' => 'Cancelado'
+                                    ];
+                                @endphp
+                                {{ $estadosLabel[$solicitud->estado] ?? ucfirst(str_replace('_', ' ', $solicitud->estado)) }}
                             </td>
 
                             <td class="p-3">
@@ -59,10 +69,11 @@
                                     @csrf
 
                                     <select name="estado" class="border rounded p-1 text-sm">
-                                        <option value="pendiente">Pendiente</option>
-                                        <option value="en proceso">En proceso</option>
-                                        <option value="listo">Listo</option>
-                                        <option value="entregado">Entregado</option>
+                                        <option value="pendiente" {{ $solicitud->estado == 'pendiente' ? 'selected' : '' }}>Pendiente</option>
+                                        <option value="en_revision" {{ $solicitud->estado == 'en_revision' ? 'selected' : '' }}>En proceso / Revisión</option>
+                                        <option value="reparado" {{ $solicitud->estado == 'reparado' ? 'selected' : '' }}>Reparado / Listo</option>
+                                        <option value="entregado" {{ $solicitud->estado == 'entregado' ? 'selected' : '' }}>Entregado</option>
+                                        <option value="cancelado" {{ $solicitud->estado == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
                                     </select>
 
                                     <button class="bg-green-600 text-white px-3 py-1 rounded text-sm">
