@@ -11,12 +11,12 @@ class ServicioAdminController extends Controller
     // Listado de solicitudes
     public function index(Request $request)
     {
-        $query = SolicitudServicio::with('usuario','servicio')
-            ->orderBy('created_at','desc');
+        $query = SolicitudServicio::with('usuario', 'servicio')
+            ->orderBy('created_at', 'desc');
 
         // Filtro por estado
-        if($request->estado){
-            $query->where('estado',$request->estado);
+        if ($request->estado) {
+            $query->where('estado', $request->estado);
         }
 
         $solicitudes = $query->get();
@@ -25,7 +25,7 @@ class ServicioAdminController extends Controller
     }
 
     // Cambiar estado
-    public function cambiarEstado(Request $request, $id)
+    public function cambiarEstado(Request $request, int $id)
     {
         $solicitud = SolicitudServicio::findOrFail($id);
 
@@ -36,6 +36,6 @@ class ServicioAdminController extends Controller
         $solicitud->estado = $request->estado;
         $solicitud->save();
 
-        return back()->with('success','Estado actualizado');
+        return back()->with('success', 'Estado actualizado');
     }
 }

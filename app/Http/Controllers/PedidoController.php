@@ -20,17 +20,16 @@ class PedidoController extends Controller
     }
 
     // Mostrar detalle de un pedido
-public function show($id)
-{
-    $pedido = Pedido::where('id', $id)
-        ->where('usuario_id', Auth::id())
-        ->firstOrFail();
+    public function show(int $id)
+    {
+        $pedido = Pedido::where('id', $id)
+            ->where('usuario_id', Auth::id())
+            ->firstOrFail();
 
-    $detalles = PedidoDetalle::where('pedido_id', $pedido->id)
-    ->with('producto')
-    ->get();
+        $detalles = PedidoDetalle::where('pedido_id', $pedido->id)
+            ->with('producto')
+            ->get();
 
-    return view('pedidos.show', compact('pedido', 'detalles'));
-}
-
+        return view('pedidos.show', compact('pedido', 'detalles'));
+    }
 }
