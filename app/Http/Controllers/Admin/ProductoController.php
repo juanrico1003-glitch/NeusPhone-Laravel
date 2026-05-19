@@ -8,6 +8,7 @@ use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Color;
 use App\Models\Almacenamiento;
+use App\Models\Ram;
 use App\Models\Producto;
 
 class ProductoController extends Controller
@@ -30,12 +31,14 @@ class ProductoController extends Controller
         $marcas = Marca::where('estado', 1)->get();
         $colores = Color::all();
         $almacenamientos = Almacenamiento::all();
+        $rams = Ram::all();
 
         return view('admin.productos.create', compact(
             'categorias',
             'marcas',
             'colores',
-            'almacenamientos'
+            'almacenamientos',
+            'rams'
         ));
     }
     // Guardar nuevo producto en la base de datos
@@ -64,10 +67,12 @@ class ProductoController extends Controller
             'nombre' => $request->nombre,
             'tipo' => $request->tipo,
             'color_id' => $request->color_id,
+            'ram_id' => $request->ram_id,
             'almacenamiento_id' => $request->almacenamiento_id,
             'precio' => $request->precio,
             'stock' => $request->stock,
             'descripcion' => $request->descripcion,
+            'caracteristicas' => $request->caracteristicas,
             'imagenes' => empty($nombresImagenes) ? null : $nombresImagenes,
             'estado' => 1
         ]);
@@ -88,13 +93,15 @@ class ProductoController extends Controller
         $marcas = Marca::where('estado', 1)->get();
         $colores = Color::all();
         $almacenamientos = Almacenamiento::all();
+        $rams = Ram::all();
 
         return view('admin.productos.edit', compact(
             'producto',
             'categorias',
             'marcas',
             'colores',
-            'almacenamientos'
+            'almacenamientos',
+            'rams'
         ));
     }
 
@@ -106,6 +113,9 @@ class ProductoController extends Controller
         $producto->nombre = $request->nombre;
         $producto->precio = $request->precio;
         $producto->stock = $request->stock;
+        $producto->ram_id = $request->ram_id;
+        $producto->descripcion = $request->descripcion;
+        $producto->caracteristicas = $request->caracteristicas;
 
         if ($request->hasFile('imagenes')) {
             $nombresImagenes = [];

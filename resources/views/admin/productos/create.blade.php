@@ -66,9 +66,23 @@
             <div class="mt-4">
                 <label class="block">Color</label>
                 <select name="color_id" class="w-full border rounded p-2">
+                    <option value="">Seleccione</option>
                     @foreach($colores as $color)
                         <option value="{{ $color->id }}">
                             {{ $color->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Memoria RAM -->
+            <div class="mt-4">
+                <label class="block">Memoria RAM</label>
+                <select name="ram_id" class="w-full border rounded p-2">
+                    <option value="">Seleccione</option>
+                    @foreach($rams as $ram)
+                        <option value="{{ $ram->id }}">
+                            {{ $ram->capacidad }}
                         </option>
                     @endforeach
                 </select>
@@ -102,6 +116,13 @@
             <div class="mt-4">
                 <label class="block">Descripción</label>
                 <textarea name="descripcion" class="w-full border rounded p-2"></textarea>
+            </div>
+
+            <!-- Caracteristicas -->
+            <div class="mt-4">
+                <label class="block">Características</label>
+                <textarea name="caracteristicas" class="w-full border rounded p-2" rows="4" placeholder="Escribe una característica por línea..."></textarea>
+                <small class="text-gray-500">Escribe cada característica en una nueva línea para que se muestre como lista.</small>
             </div>
 
             <div class="mt-4">

@@ -10,6 +10,7 @@ use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TestimonioController;
+use App\Http\Controllers\ChatbotController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +25,7 @@ Route::get('/dashboard', function () {
     return view('landing', compact('productosEstrella', 'testimonios'));
 })->name('dashboard.main');
 
-// Páginas legales
+// Paginas legales
 Route::view('/politicas', 'politicas')->name('politicas');
 Route::view('/terminos', 'terminos')->name('terminos');
 
@@ -48,6 +49,9 @@ Route::get('/carrito/eliminar/{id}', [CarritoController::class, 'eliminar'])
 Route::post('/carrito/confirmar', [CarritoController::class, 'confirmar'])
     ->middleware('auth')
     ->name('carrito.confirmar');
+
+    // Chatbot
+    Route::post('/chatbot', [ChatbotController::class, 'send']);
 
 // Cliente con login
 Route::middleware('auth')->group(function () {

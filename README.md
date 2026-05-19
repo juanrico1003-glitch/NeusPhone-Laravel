@@ -45,3 +45,17 @@ Por último, construye los recursos del frontend:
 npm run build
 
 El proyecto ya debería estar configurado y listo para funcionar.
+
+---
+
+## Funcionalidades adicionales
+
+- **Automatización con n8n:**
+    - Se integró n8n para automatizar el envío de correos de bienvenida cada vez que un nuevo usuario se registra.
+    - El envío de correos utiliza SMTP con una cuenta de Gmail diferente a la principal del sistema.
+
+- **Chatbot inteligente:**
+    - El chatbot ahora utiliza una instancia local de IA (Ollama Llama 3.2:3b) conectada mediante n8n.
+    - El chatbot puede leer la base de datos y hacer recomendaciones personalizadas a los clientes.
+    - Ejemplo: Si el usuario pregunta por productos Samsung, el chatbot consulta el stock disponible, muestra el precio en COP, colores, nombre y si el producto es nuevo o usado.
+    - El chatbot también informa sobre redes sociales y métodos de contacto disponibles.

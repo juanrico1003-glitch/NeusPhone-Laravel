@@ -6,7 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
 
-    // Configuracion de rutas principales
+    // Configuración de rutas principales
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
         commands: __DIR__ . '/../routes/console.php',
@@ -15,14 +15,20 @@ return Application::configure(basePath: dirname(__DIR__))
 
     // Registro de middlewares personalizados
     ->withMiddleware(function (Middleware $middleware) {
+        // Excepciones de CSRF para el Chatbot
+        $middleware->validateCsrfTokens(except: [
+            'chatbot',
+        ]);
 
-        // Crear admin para usarlo en las rutas
+        // Corrección del alias para el middleware admin
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
 
-    // Configuracion de manejo de errores
-    ->withExceptions(function (Exceptions $exceptions) {})
+    // Configuración de manejo de errores
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })
 
     ->create();

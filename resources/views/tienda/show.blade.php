@@ -24,8 +24,10 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
 
-            <!-- Carrusel imagenes Alpine.js -->
-            <div x-data="{ 
+            <!-- Columna Izquierda (Carrusel + Características) -->
+            <div class="flex flex-col gap-6">
+                <!-- Carrusel imagenes Alpine.js -->
+                <div x-data="{ 
                     imagenes: {{ json_encode($producto->imagenes ?? ['default.png']) }},
                     imagenActiva: 0 
                  }" class="flex flex-col gap-3 md:gap-4">
@@ -71,7 +73,22 @@
                 </div>
             </div>
 
-            <!-- Informacion del Producto -->
+            <!-- Caracteristicas (Columna Izquierda debajo de imagen) -->
+            @if($producto->caracteristicas)
+                <div class="mt-4 md:mt-6 text-sm md:text-base text-gray-700 leading-relaxed bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                    <p class="font-semibold text-gray-800 mb-3 text-lg border-b pb-2">Características Principales</p>
+                    <ul class="list-disc pl-5 space-y-1.5 marker:text-blue-500">
+                        @foreach(explode("\n", $producto->caracteristicas) as $caracteristica)
+                            @if(trim($caracteristica) !== '')
+                                <li>{{ trim($caracteristica) }}</li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            </div>
+
+            <!-- Informacion del Producto (Columna Derecha) -->
             <div class="flex flex-col">
                 <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 leading-tight mb-2">
                     {{ $producto->nombre }}
@@ -121,16 +138,68 @@
                     @endif
                 </div>
 
-                <!-- Descripcion -->
-                @if($producto->descripcion)
-                    <div class="mb-6 md:mb-8 text-sm md:text-base text-gray-700 leading-relaxed">
-                        <p class="font-semibold text-gray-800 mb-2">Descripción</p>
-                        <p>{{ $producto->descripcion }}</p>
+                <!-- Variantes de Color -->
+                @if(isset($coloresDisponibles) && count($coloresDisponibles) > 0)
+                <div class="mb-4">
+                    <p class="text-sm font-semibold text-gray-800 mb-2">Color</p>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($coloresDisponibles as $c)
+                            <a href="{{ route('tienda.producto', $c['producto_id']) }}" 
+                               class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
+                               {{ $c['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
+                               {{ !$c['has_stock'] ? 'opacity-50 line-through' : '' }}">
+                                {{ $c['color']->nombre }}
+                                @if(!$c['has_stock'])
+                                    <span class="absolute text-red-500 font-bold text-lg">✕</span>
+                                @endif
+                            </a>
+                        @endforeach
                     </div>
+                </div>
                 @endif
 
-                <!-- Boton Agregar -->
-                <div class="mt-auto">
+                <!-- Variantes de RAM -->
+                @if(isset($ramsDisponibles) && count($ramsDisponibles) > 0)
+                <div class="mb-4">
+                    <p class="text-sm font-semibold text-gray-800 mb-2">Memoria RAM</p>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($ramsDisponibles as $r)
+                            <a href="{{ route('tienda.producto', $r['producto_id']) }}" 
+                               class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
+                               {{ $r['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
+                               {{ !$r['has_stock'] ? 'opacity-50 line-through' : '' }}">
+                                {{ $r['ram']->capacidad }}
+                                @if(!$r['has_stock'])
+                                    <span class="absolute text-red-500 font-bold text-lg">✕</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Variantes de Almacenamiento -->
+                @if(isset($almacenamientosDisponibles) && count($almacenamientosDisponibles) > 0)
+                <div class="mb-6 md:mb-8">
+                    <p class="text-sm font-semibold text-gray-800 mb-2">Almacenamiento</p>
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($almacenamientosDisponibles as $a)
+                            <a href="{{ route('tienda.producto', $a['producto_id']) }}" 
+                               class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
+                               {{ $a['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
+                               {{ !$a['has_stock'] ? 'opacity-50 line-through' : '' }}">
+                                {{ $a['almacenamiento']->capacidad }}
+                                @if(!$a['has_stock'])
+                                    <span class="absolute text-red-500 font-bold text-lg">✕</span>
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+                @endif
+
+                <!-- Botones de Acción -->
+                <div class="mt-6 mb-6 flex flex-col gap-3">
                     <form action="{{ route('carrito.agregar', $producto->id) }}" method="POST">
                         @csrf
                         <button {{ $producto->stock <= 0 ? 'disabled' : '' }}
@@ -138,7 +207,27 @@
                             {{ $producto->stock > 0 ? '🛒 Agregar al carrito' : '✕ Agotado' }}
                         </button>
                     </form>
+
+                    @php
+                        $mensajeWs = "Hola, me interesa el producto *" . $producto->nombre . "*";
+                        if($producto->color) $mensajeWs .= " color " . $producto->color->nombre;
+                        if($producto->almacenamiento) $mensajeWs .= ", " . $producto->almacenamiento->capacidad . " de almacenamiento";
+                        if($producto->ram) $mensajeWs .= " y " . $producto->ram->capacidad . " de RAM";
+                        $urlWs = "https://wa.me/573014091025?text=" . rawurlencode($mensajeWs);
+                    @endphp
+                    <a href="{{ $urlWs }}" target="_blank" class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-lg transition transform hover:shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                        Comprar por WhatsApp
+                    </a>
                 </div>
+
+                <!-- Descripcion -->
+                @if($producto->descripcion)
+                    <div class="mb-4 md:mb-6 text-sm md:text-base text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg">
+                        <p class="font-semibold text-gray-800 mb-2">Descripción</p>
+                        <p>{{ $producto->descripcion }}</p>
+                    </div>
+                @endif
 
                 <!-- Informacion adicional -->
                 <div class="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200 text-xs md:text-sm text-gray-600">

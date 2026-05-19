@@ -7,6 +7,7 @@ use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Color;
 use App\Models\Almacenamiento;
+use App\Models\Ram;
 
 class Producto extends Model
 {
@@ -18,10 +19,12 @@ class Producto extends Model
         'nombre',
         'tipo',
         'color_id',
+        'ram_id',
         'almacenamiento_id',
         'precio',
         'stock',
         'descripcion',
+        'caracteristicas',
         'imagenes',
         'estado'
     ];
@@ -48,6 +51,11 @@ public function color()
 public function almacenamiento()
 {
     return $this->belongsTo(Almacenamiento::class);
+}
+
+public function ram()
+{
+    return $this->belongsTo(Ram::class);
 }
 
 }
