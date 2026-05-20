@@ -47,7 +47,7 @@
                             </td>
 
                             <td class="p-3 text-gray-600">
-                                {{ $producto->marca->nombre ?? '-' }}
+                                {{ $producto->marca ?? '-' }}
                             </td>
 
                             <td class="p-3 font-bold text-green-600">
@@ -127,7 +127,7 @@
                         <div class="flex-1 min-w-0">
                             <h3 class="font-bold text-gray-800 truncate">{{ $producto->nombre }}</h3>
                             <p class="text-sm text-gray-600 truncate">{{ $producto->categoria->nombre ?? '-' }}</p>
-                            <p class="text-sm text-gray-600 truncate">{{ $producto->marca->nombre ?? '-' }}</p>
+                            <p class="text-sm text-gray-600 truncate">{{ $producto->marca ?? '-' }}</p>
                             
                             <div class="flex justify-between items-end mt-2">
                                 <div>

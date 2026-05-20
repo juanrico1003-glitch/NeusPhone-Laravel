@@ -17,7 +17,7 @@ class TiendaController extends Controller
         }
 
         if ($request->marca) {
-            $query->where('marca_id', $request->marca);
+            $query->where('marca', $request->marca);
         }
 
         if ($request->tipo) {
@@ -34,7 +34,7 @@ class TiendaController extends Controller
         }
 
         $productos = $query->get();
-        $marcas = \App\Models\Marca::all();
+        $marcas = \Database\Seeders\ProductoOpcionesSeeder::marcas();
 
         return view('tienda.index', compact('productos', 'marcas'));
     }
@@ -42,65 +42,66 @@ class TiendaController extends Controller
     // Mostrar detalle del producto
     public function show(int $id)
     {
-        $producto = \App\Models\Producto::with(['categoria', 'marca', 'color', 'almacenamiento', 'ram'])
+        $producto = \App\Models\Producto::with(['categoria', 'testimonios' => function($q) {
+            $q->where('estado', 1)->with('usuario');
+        }])
             ->where('estado', 1)
             ->findOrFail($id);
 
-        $productosFamilia = \App\Models\Producto::with(['color', 'almacenamiento', 'ram'])
-            ->where('nombre', $producto->nombre)
+        $productosFamilia = \App\Models\Producto::where('nombre', $producto->nombre)
             ->where('estado', 1)
             ->get();
 
         $coloresDisponibles = [];
-        $colors = $productosFamilia->pluck('color')->filter()->unique('id');
+        $colors = $productosFamilia->pluck('color')->filter()->unique();
         foreach ($colors as $color) {
-            $match = $productosFamilia->where('color_id', $color->id)->where('almacenamiento_id', $producto->almacenamiento_id)->where('ram_id', $producto->ram_id)->first();
+            $match = $productosFamilia->where('color', $color)->where('almacenamiento', $producto->almacenamiento)->where('ram', $producto->ram)->first();
             if (!$match) {
-                $match = $productosFamilia->where('color_id', $color->id)->first();
+                $match = $productosFamilia->where('color', $color)->first();
             }
             if ($match) {
-                $stockTotal = $productosFamilia->where('color_id', $color->id)->sum('stock');
+                $stockTotal = $productosFamilia->where('color', $color)->sum('stock');
                 $coloresDisponibles[] = [
                     'color' => $color,
                     'producto_id' => $match->id,
                     'has_stock' => $stockTotal > 0,
-                    'is_active' => $color->id === $producto->color_id
+                    'is_active' => $color === $producto->color
                 ];
             }
         }
 
         $ramsDisponibles = [];
-        $rams = $productosFamilia->pluck('ram')->filter()->unique('id');
+        $rams = $productosFamilia->pluck('ram')->filter()->unique();
         foreach ($rams as $ram) {
-            $match = $productosFamilia->where('ram_id', $ram->id)->where('color_id', $producto->color_id)->where('almacenamiento_id', $producto->almacenamiento_id)->first();
+            $match = $productosFamilia->where('ram', $ram)->where('color', $producto->color)->where('almacenamiento', $producto->almacenamiento)->first();
             if (!$match) {
-                $match = $productosFamilia->where('ram_id', $ram->id)->first();
+                $match = $productosFamilia->where('ram', $ram)->first();
             }
             if ($match) {
-                $stockTotal = $productosFamilia->where('ram_id', $ram->id)->sum('stock');
+                $stockTotal = $productosFamilia->where('ram', $ram)->sum('stock');
                 $ramsDisponibles[] = [
                     'ram' => $ram,
                     'producto_id' => $match->id,
                     'has_stock' => $stockTotal > 0,
-                    'is_active' => $ram->id === $producto->ram_id
+                    'is_active' => $ram === $producto->ram
                 ];
             }
         }
 
         $almacenamientosDisponibles = [];
-        $almacenamientos = $productosFamilia->pluck('almacenamiento')->filter()->unique('id');
+        $almacenamientos = $productosFamilia->pluck('almacenamiento')->filter()->unique();
         foreach ($almacenamientos as $alm) {
-            $match = $productosFamilia->where('almacenamiento_id', $alm->id)->where('color_id', $producto->color_id)->where('ram_id', $producto->ram_id)->first();
+            $match = $productosFamilia->where('almacenamiento', $alm)->where('color', $producto->color)->where('ram', $producto->ram)->first();
             if (!$match) {
-                $match = $productosFamilia->where('almacenamiento_id', $alm->id)->first();
+                $match = $productosFamilia->where('almacenamiento', $alm)->first();
             }
             if ($match) {
-                $stockTotal = $productosFamilia->where('almacenamiento_id', $alm->id)->sum('stock');
+                $stockTotal = $productosFamilia->where('almacenamiento', $alm)->sum('stock');
                 $almacenamientosDisponibles[] = [
                     'almacenamiento' => $alm,
                     'producto_id' => $match->id,
                     'has_stock' => $stockTotal > 0,
-                    'is_active' => $alm->id === $producto->almacenamiento_id
+                    'is_active' => $alm === $producto->almacenamiento
                 ];
             }
         }

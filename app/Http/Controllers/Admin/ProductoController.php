@@ -5,10 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Categoria;
-use App\Models\Marca;
-use App\Models\Color;
-use App\Models\Almacenamiento;
-use App\Models\Ram;
 use App\Models\Producto;
 
 class ProductoController extends Controller
@@ -17,7 +13,7 @@ class ProductoController extends Controller
     public function index()
     {
         // Traemos productos con relaciones
-        $productos = Producto::with(['categoria', 'marca', 'color', 'almacenamiento'])->get();
+        $productos = Producto::with(['categoria'])->get();
 
         return view('admin.productos.index', compact('productos'));
     }
@@ -28,10 +24,10 @@ class ProductoController extends Controller
     {
         // Traemos datos para los selects
         $categorias = Categoria::where('estado', 1)->get();
-        $marcas = Marca::where('estado', 1)->get();
-        $colores = Color::all();
-        $almacenamientos = Almacenamiento::all();
-        $rams = Ram::all();
+        $marcas = \Database\Seeders\ProductoOpcionesSeeder::marcas();
+        $colores = \Database\Seeders\ProductoOpcionesSeeder::colores();
+        $almacenamientos = \Database\Seeders\ProductoOpcionesSeeder::almacenamientos();
+        $rams = \Database\Seeders\ProductoOpcionesSeeder::rams();
 
         return view('admin.productos.create', compact(
             'categorias',
@@ -46,7 +42,7 @@ class ProductoController extends Controller
     {
         $request->validate([
             'categoria_id' => 'required',
-            'marca_id' => 'required',
+            'marca' => 'required',
             'nombre' => 'required',
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
@@ -63,12 +59,12 @@ class ProductoController extends Controller
         }
         Producto::create([
             'categoria_id' => $request->categoria_id,
-            'marca_id' => $request->marca_id,
+            'marca' => $request->marca,
             'nombre' => $request->nombre,
             'tipo' => $request->tipo,
-            'color_id' => $request->color_id,
-            'ram_id' => $request->ram_id,
-            'almacenamiento_id' => $request->almacenamiento_id,
+            'color' => $request->color,
+            'ram' => $request->ram,
+            'almacenamiento' => $request->almacenamiento,
             'precio' => $request->precio,
             'stock' => $request->stock,
             'descripcion' => $request->descripcion,
@@ -90,10 +86,10 @@ class ProductoController extends Controller
         $producto = Producto::findOrFail($id);
 
         $categorias = Categoria::where('estado', 1)->get();
-        $marcas = Marca::where('estado', 1)->get();
-        $colores = Color::all();
-        $almacenamientos = Almacenamiento::all();
-        $rams = Ram::all();
+        $marcas = \Database\Seeders\ProductoOpcionesSeeder::marcas();
+        $colores = \Database\Seeders\ProductoOpcionesSeeder::colores();
+        $almacenamientos = \Database\Seeders\ProductoOpcionesSeeder::almacenamientos();
+        $rams = \Database\Seeders\ProductoOpcionesSeeder::rams();
 
         return view('admin.productos.edit', compact(
             'producto',
@@ -110,10 +106,14 @@ class ProductoController extends Controller
     {
         $producto = Producto::findOrFail($id);
 
+        $producto->categoria_id = $request->categoria_id;
         $producto->nombre = $request->nombre;
         $producto->precio = $request->precio;
         $producto->stock = $request->stock;
-        $producto->ram_id = $request->ram_id;
+        $producto->marca = $request->marca;
+        $producto->color = $request->color;
+        $producto->ram = $request->ram;
+        $producto->almacenamiento = $request->almacenamiento;
         $producto->descripcion = $request->descripcion;
         $producto->caracteristicas = $request->caracteristicas;
 

@@ -103,7 +103,7 @@
                     @endif
                     @if($producto->marca)
                         <div>
-                            <span class="font-semibold">Marca:</span> {{ $producto->marca->nombre }}
+                            <span class="font-semibold">Marca:</span> {{ $producto->marca }}
                         </div>
                     @endif
                 </div>
@@ -148,7 +148,7 @@
                                class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
                                {{ $c['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
                                {{ !$c['has_stock'] ? 'opacity-50 line-through' : '' }}">
-                                {{ $c['color']->nombre }}
+                                {{ $c['color'] }}
                                 @if(!$c['has_stock'])
                                     <span class="absolute text-red-500 font-bold text-lg">✕</span>
                                 @endif
@@ -168,7 +168,7 @@
                                class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
                                {{ $r['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
                                {{ !$r['has_stock'] ? 'opacity-50 line-through' : '' }}">
-                                {{ $r['ram']->capacidad }}
+                                {{ $r['ram'] }}
                                 @if(!$r['has_stock'])
                                     <span class="absolute text-red-500 font-bold text-lg">✕</span>
                                 @endif
@@ -188,7 +188,7 @@
                                class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
                                {{ $a['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
                                {{ !$a['has_stock'] ? 'opacity-50 line-through' : '' }}">
-                                {{ $a['almacenamiento']->capacidad }}
+                                {{ $a['almacenamiento'] }}
                                 @if(!$a['has_stock'])
                                     <span class="absolute text-red-500 font-bold text-lg">✕</span>
                                 @endif
@@ -210,9 +210,9 @@
 
                     @php
                         $mensajeWs = "Hola, me interesa el producto *" . $producto->nombre . "*";
-                        if($producto->color) $mensajeWs .= " color " . $producto->color->nombre;
-                        if($producto->almacenamiento) $mensajeWs .= ", " . $producto->almacenamiento->capacidad . " de almacenamiento";
-                        if($producto->ram) $mensajeWs .= " y " . $producto->ram->capacidad . " de RAM";
+                        if($producto->color) $mensajeWs .= " color " . $producto->color;
+                        if($producto->almacenamiento) $mensajeWs .= ", " . $producto->almacenamiento . " de almacenamiento";
+                        if($producto->ram) $mensajeWs .= " y " . $producto->ram . " de RAM";
                         $urlWs = "https://wa.me/573014091025?text=" . rawurlencode($mensajeWs);
                     @endphp
                     <a href="{{ $urlWs }}" target="_blank" class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-lg transition transform hover:shadow-lg active:scale-95 flex items-center justify-center gap-2">
@@ -237,6 +237,82 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- Sección de Comentarios (Ancho Completo) -->
+        <div class="mt-12 pt-8 border-t border-gray-200 w-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Opiniones del Producto</h2>
+
+            @auth
+                <!-- Formulario para agregar reseña -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Deja tu opinión</h3>
+                    <form action="{{ route('tienda.producto.resena', $producto->id) }}" method="POST">
+                        @csrf
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Calificación</label>
+                            <div class="flex gap-4">
+                                @for($i = 5; $i >= 1; $i--)
+                                    <label class="cursor-pointer flex items-center gap-1 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 hover:bg-blue-50 transition">
+                                        <input type="radio" name="calificacion" value="{{ $i }}" {{ $i == 5 ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
+                                        <span class="text-gray-700 font-medium">{{ $i }} <span class="text-yellow-400">★</span></span>
+                                    </label>
+                                @endfor
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="comentario" class="block text-sm font-medium text-gray-700 mb-1">Tu comentario</label>
+                            <textarea name="comentario" id="comentario" rows="3" required
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                placeholder="¿Qué te pareció este producto?"></textarea>
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition transform hover:scale-105 active:scale-95">
+                            Publicar opinión
+                        </button>
+                    </form>
+                </div>
+            @else
+                <div class="bg-blue-50 p-4 rounded-lg mb-8 text-center border border-blue-100">
+                    <p class="text-blue-800 font-medium">Para dejar una opinión, debes <a href="{{ route('login') }}" class="text-blue-600 font-bold hover:underline">iniciar sesión</a>.</p>
+                </div>
+            @endauth
+
+            <!-- Lista de reseñas -->
+            @if($producto->testimonios && $producto->testimonios->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach($producto->testimonios as $testimonio)
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-sm">
+                                        {{ strtoupper(substr($testimonio->usuario->nombres, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-gray-800 leading-tight">{{ $testimonio->usuario->nombres }} {{ $testimonio->usuario->apellidos }}</p>
+                                        <div class="flex text-yellow-400 text-sm mt-0.5">
+                                            @for($i = 0; $i < 5; $i++)
+                                                @if($i < $testimonio->calificacion)
+                                                    ★
+                                                @else
+                                                    <span class="text-gray-200">★</span>
+                                                @endif
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 text-sm italic">"{{ $testimonio->comentario }}"</p>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-4 pt-3 border-t border-gray-100">{{ $testimonio->created_at->diffForHumans() }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-10 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="text-4xl mb-3">💬</div>
+                    <p class="text-gray-500 font-medium">Aún no hay opiniones para este producto.</p>
+                    <p class="text-gray-400 text-sm mt-1">¡Sé el primero en comentar!</p>
+                </div>
+            @endif
         </div>
 
     </div>

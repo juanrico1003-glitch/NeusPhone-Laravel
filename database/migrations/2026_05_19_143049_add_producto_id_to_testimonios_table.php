@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rams', function (Blueprint $table) {
-            $table->id();
-            $table->string('capacidad', 50);
-            $table->timestamps();
+        Schema::table('testimonios', function (Blueprint $table) {
+            $table->foreignId('producto_id')->nullable()->constrained('productos')->cascadeOnDelete();
         });
     }
 
@@ -23,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('rams');
+        Schema::table('testimonios', function (Blueprint $table) {
+            $table->dropForeign(['producto_id']);
+            $table->dropColumn('producto_id');
+        });
     }
 };

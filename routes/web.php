@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     // Testimonios cliente
     Route::get('/reseñas/nueva', [TestimonioController::class, 'create'])->name('testimonios.create');
     Route::post('/reseñas', [TestimonioController::class, 'store'])->name('testimonios.store');
+    Route::post('/tienda/producto/{id}/reseña', [TestimonioController::class, 'storeProducto'])->name('tienda.producto.resena');
 });
 
 // Admin rol

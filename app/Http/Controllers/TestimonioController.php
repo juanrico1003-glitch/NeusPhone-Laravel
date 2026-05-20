@@ -29,4 +29,22 @@ class TestimonioController extends Controller
 
         return redirect()->route('cliente.dashboard')->with('success', '¡Gracias por dejarnos tu reseña! Ya está publicada en la página principal.');
     }
+
+    public function storeProducto(Request $request, $id)
+    {
+        $request->validate([
+            'comentario' => 'required|string|max:500',
+            'calificacion' => 'required|integer|min:1|max:5',
+        ]);
+
+        Testimonio::create([
+            'usuario_id' => Auth::id(),
+            'producto_id' => $id,
+            'comentario' => $request->comentario,
+            'calificacion' => $request->calificacion,
+            'estado' => 1
+        ]);
+
+        return redirect()->route('tienda.producto', $id)->with('success', '¡Gracias por dejarnos tu reseña sobre este producto!');
+    }
 }

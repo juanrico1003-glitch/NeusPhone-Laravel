@@ -3,11 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Categoria;
-use App\Models\Marca;
-use App\Models\Color;
-use App\Models\Almacenamiento;
-use App\Models\Ram;
 
 class Producto extends Model
 {
@@ -15,12 +10,12 @@ class Producto extends Model
 
     protected $fillable = [
         'categoria_id',
-        'marca_id',
+        'marca',
         'nombre',
         'tipo',
-        'color_id',
-        'ram_id',
-        'almacenamiento_id',
+        'color',
+        'ram',
+        'almacenamiento',
         'precio',
         'stock',
         'descripcion',
@@ -38,24 +33,9 @@ public function categoria()
     return $this->belongsTo(Categoria::class);
 }
 
-public function marca()
+public function testimonios()
 {
-    return $this->belongsTo(Marca::class);
-}
-
-public function color()
-{
-    return $this->belongsTo(Color::class);
-}
-
-public function almacenamiento()
-{
-    return $this->belongsTo(Almacenamiento::class);
-}
-
-public function ram()
-{
-    return $this->belongsTo(Ram::class);
+    return $this->hasMany(Testimonio::class);
 }
 
 }

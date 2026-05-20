@@ -20,13 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'chatbot',
         ]);
 
-        // Corrección del alias para el middleware admin
+        // Correccion del alias para el middleware admin
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })
 
-    // Configuración de manejo de errores
+    // Configuracion de manejo de errores
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })

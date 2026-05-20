@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('categoria_id')->constrained('categorias');
-            $table->foreignId('marca_id')->constrained('marcas');
+            $table->string('marca', 100);
             $table->string('nombre', 150);
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 12, 2);
@@ -22,8 +22,9 @@ return new class extends Migration
             $table->enum('tipo', ['nuevo', 'usado']);
             $table->tinyInteger('estado')->default(1);
             $table->string('imagen')->nullable();
-            $table->foreignId('color_id')->nullable()->constrained('colores');
-            $table->foreignId('almacenamiento_id')->nullable()->constrained('almacenamientos');
+            $table->string('color', 50)->nullable();
+            $table->string('almacenamiento', 50)->nullable();
+            $table->string('ram', 50)->nullable();
             $table->timestamps();
         });
     }

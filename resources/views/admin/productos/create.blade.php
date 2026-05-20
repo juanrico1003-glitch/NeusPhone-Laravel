@@ -37,11 +37,11 @@
             <!-- Marca -->
             <div class="mt-4">
                 <label class="block">Marca</label>
-                <select name="marca_id" class="w-full border rounded p-2" required>
+                <select name="marca" class="w-full border rounded p-2" required>
                     <option value="">Seleccione</option>
                     @foreach($marcas as $marca)
-                        <option value="{{ $marca->id }}">
-                            {{ $marca->nombre }}
+                        <option value="{{ $marca }}">
+                            {{ $marca }}
                         </option>
                     @endforeach
                 </select>
@@ -65,11 +65,11 @@
             <!-- Color -->
             <div class="mt-4">
                 <label class="block">Color</label>
-                <select name="color_id" class="w-full border rounded p-2">
+                <select name="color" class="w-full border rounded p-2">
                     <option value="">Seleccione</option>
                     @foreach($colores as $color)
-                        <option value="{{ $color->id }}">
-                            {{ $color->nombre }}
+                        <option value="{{ $color }}">
+                            {{ $color }}
                         </option>
                     @endforeach
                 </select>
@@ -78,11 +78,11 @@
             <!-- Memoria RAM -->
             <div class="mt-4">
                 <label class="block">Memoria RAM</label>
-                <select name="ram_id" class="w-full border rounded p-2">
+                <select name="ram" class="w-full border rounded p-2">
                     <option value="">Seleccione</option>
                     @foreach($rams as $ram)
-                        <option value="{{ $ram->id }}">
-                            {{ $ram->capacidad }}
+                        <option value="{{ $ram }}">
+                            {{ $ram }}
                         </option>
                     @endforeach
                 </select>
@@ -91,10 +91,11 @@
             <!-- Almacenamiento -->
             <div class="mt-4">
                 <label class="block">Almacenamiento</label>
-                <select name="almacenamiento_id" class="w-full border rounded p-2">
+                <select name="almacenamiento" class="w-full border rounded p-2">
+                    <option value="">Seleccione</option>
                     @foreach($almacenamientos as $almacenamiento)
-                        <option value="{{ $almacenamiento->id }}">
-                            {{ $almacenamiento->capacidad }}
+                        <option value="{{ $almacenamiento }}">
+                            {{ $almacenamiento }}
                         </option>
                     @endforeach
                 </select>

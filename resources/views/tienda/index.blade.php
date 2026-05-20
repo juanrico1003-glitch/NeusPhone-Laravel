@@ -19,9 +19,9 @@
             class="w-full border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
                 <option value="">Todas las marcas</option>
                 @foreach($marcas as $marca)
-                    <option value="{{ $marca->id }}"
-                        {{ request('marca') == $marca->id ? 'selected' : '' }}>
-                        {{ $marca->nombre }}
+                    <option value="{{ $marca }}"
+                        {{ request('marca') == $marca ? 'selected' : '' }}>
+                        {{ $marca }}
                     </option>
                 @endforeach
             </select>
