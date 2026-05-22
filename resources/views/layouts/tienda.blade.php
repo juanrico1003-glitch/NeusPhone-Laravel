@@ -256,7 +256,7 @@
             <p class="text-xs md:text-sm opacity-80 leading-relaxed">Venta y reparación de dispositivos electrónicos.</p>
             <!-- Logo -->
             <div class="mt-6 flex justify-center w-full">
-                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-80 drop-shadow-md" />
+                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-10 drop-shadow-md" />
             </div>
         </div>
         <!-- Contacto -->

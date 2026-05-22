@@ -5,7 +5,6 @@
 <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-0 text-[60px] font-bold text-blue-600/10 whitespace-nowrap pointer-events-none select-none -z-10 text-transition" id="bgTextAnim">
     NeusPhone
 </div>
-
 <style>
     .text-transition { will-change: transform, font-size; }
 
@@ -105,7 +104,7 @@
                 </div>
             </div>
         @empty
-            <div class="col-span-full text-center text-gray-500 py-10 font-medium">Aún no hay ofertas registradas en este momento.</div>
+            <div class="col-span-full text-center text-gray-500 py-10 font-medium">Aún no hay ofertas ddisponibles en este momento.</div>
         @endforelse
     </div>
 </div>
@@ -151,8 +150,8 @@
                 <div class="w-14 md:w-16 h-14 md:h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 md:mb-6 shadow-inner">
                     <svg class="w-6 md:w-8 h-6 md:h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                 </div>
-                <h3 class="text-base md:text-lg font-bold text-gray-800 mb-2">Pagos Seguros</h3>
-                <p class="text-gray-600 text-sm">Transacciones encriptadas y máxima protección para tu dinero.</p>
+                <h3 class="text-base md:text-lg font-bold text-gray-800 mb-2">Metodos de pago</h3>
+                <p class="text-gray-600 text-sm">Distinto metodos de pagos para ajustarnos al cliente.</p>
             </div>
 
             <div class="glass p-6 md:p-8 rounded-2xl text-center hover:-translate-y-2 transition-transform duration-300 shadow-sm hover:shadow-lg">
