@@ -77,7 +77,7 @@
                 <a href="{{ route('tienda.producto', $producto->id) }}" class="block h-full">
                     <img src="{{ asset('productos/'.(!empty($producto->imagenes) ? $producto->imagenes[0] : 'default.png')) }}"
                          alt="{{ $producto->nombre }}"
-                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
+                         class="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300">
                 </a>
                 
                 <!-- Condicion -->

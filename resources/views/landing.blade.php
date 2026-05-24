@@ -70,13 +70,13 @@
             <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">MOTOROLA</span>
             <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">HUAWEI</span>
         </div>
-        <!-- Segundo Grupo clonado para el efecto loop  -->
+        <!-- Segundo Grupo para el efecto loop  -->
         <div class="w-1/2 flex items-center justify-around gap-3 md:gap-6 px-2 md:px-4 whitespace-nowrap">
-            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">APPLE</span>
-            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">SAMSUNG</span>
-            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">XIAOMI</span>
-            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">MOTOROLA</span>
-            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">HUAWEI</span>
+            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">ASUS</span>
+            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">DELL</span>
+            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">HP</span>
+            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">LENOVO</span>
+            <span class="text-lg md:text-2xl lg:text-4xl font-extrabold text-blue-900/40 tracking-wider flex-shrink-0">MSI</span>
         </div>
     </div>
 </div>
@@ -88,7 +88,6 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
         @forelse($productosEstrella as $producto)
             <div class="card-anim glass rounded-2xl p-4 md:p-6 flex flex-col hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(37,99,235,0.15)] transition-all duration-300 relative group overflow-hidden h-full">
-                <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-50/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                 <div class="relative aspect-square bg-white rounded-xl overflow-hidden mb-4 shadow-sm">
                     <img src="{{ asset('productos/'.(!empty($producto->imagenes) ? $producto->imagenes[0] : 'default.png')) }}" alt="{{ $producto->nombre }}" class="w-full h-full object-contain p-2">
                 </div>

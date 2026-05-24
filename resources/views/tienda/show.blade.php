@@ -67,7 +67,7 @@
                         <button @click="imagenActiva = index"
                                 :class="{'ring-2 ring-blue-600 opacity-100': imagenActiva === index, 'opacity-60 hover:opacity-100': imagenActiva !== index}"
                                 class="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden bg-white shadow-sm border border-gray-100 transition focus:outline-none snap-start">
-                            <img :src="'{{ asset('productos/') }}/' + img" :alt="'Miniatura ' + (index + 1)" class="w-full h-full object-cover">
+                            <img :src="'{{ asset('productos/') }}/' + img" :alt="'Miniatura ' + (index + 1)" class="w-full h-full object-contain p-1">
                         </button>
                     </template>
                 </div>

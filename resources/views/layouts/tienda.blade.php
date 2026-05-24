@@ -42,14 +42,14 @@
                                 </span>
                             @endif
                         </a>
-                        <!-- Menú hamburguesa -->
+                        <!-- Menu hamburguesa -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="text-white hover:text-blue-200 focus:outline-none p-2 transition" title="Menú">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
-                            <!-- Menú desplegable -->
+                            <!-- Menu desplegable -->
                             <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                                 @auth
                                     <a href="{{ Auth::user()->rol_id == 1 ? route('admin.dashboard') : route('cliente.dashboard') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm font-medium">
@@ -98,7 +98,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Buscador Móvil -->
+                <!-- Buscador -->
                 <form method="GET" action="{{ route('tienda') }}" class="flex">
                     <input type="text" name="buscar" placeholder="🔍 Buscar producto..." value="{{ request('buscar') }}" class="flex-1 border-0 rounded-l-lg px-3 py-2 text-sm text-gray-800 focus:ring-2 focus:ring-blue-400 focus:outline-none">
                     <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-r-lg transition font-medium text-sm">
@@ -107,7 +107,7 @@
                 </form>
             </div>
 
-            <!-- Vista escritorio -->
+            <!-- Vista PC -->
             <div class="hidden md:flex items-center justify-between gap-6">
                 <a href="{{ route('dashboard.main') }}" class="text-2xl md:text-3xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
                     NeusPhone
@@ -126,14 +126,14 @@
                         <a href="{{ Auth::user()->rol_id == 1 ? route('admin.dashboard') : route('cliente.dashboard') }}" class="text-white font-semibold hover:text-blue-200 transition text-sm">
                             {{ Auth::user()->nombres }}
                         </a>
-                        <!-- Menú hamburguesa -->
+                        <!-- Menu hamburguesa -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="text-white hover:text-blue-200 focus:outline-none p-2 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
-                            <!-- Menú desplegable -->
+                            <!-- Menu desplegable -->
                             <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                                 <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">
                                     Ofertas
@@ -166,14 +166,14 @@
                         <a href="{{ route('login') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium">
                             Iniciar sesión
                         </a>
-                        <!-- Menú hamburguesa para no autenticados -->
+                        <!-- Menu hamburguesa para no autenticados -->
                         <div class="relative" x-data="{ open: false }">
                             <button @click="open = !open" class="text-white hover:text-blue-200 focus:outline-none p-2 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
-                            <!-- Menú desplegable -->
+                            <!-- Menu desplegable -->
                             <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
                                 <a href="{{ route('servicios.create') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">
                                     Servicio Técnico
@@ -190,7 +190,7 @@
                             </div>
                         </div>
                     @endauth
-                    <!-- Carrito Escritorio -->
+                    <!-- Carrito PC -->
                     <a href="{{ route('carrito.index') }}" class="relative bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg ml-2 transition" title="Carrito de compras">
                         🛒
                         @php
@@ -255,8 +255,8 @@
             <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">NeusPhone</h4>
             <p class="text-xs md:text-sm opacity-80 leading-relaxed">Venta y reparación de dispositivos electrónicos.</p>
             <!-- Logo -->
-            <div class="mt-6 flex justify-center w-full">
-                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-10 drop-shadow-md" />
+            <div class="mt-0 flex justify-center w-full">
+                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-100 drop-shadow-md" />
             </div>
         </div>
         <!-- Contacto -->
@@ -322,7 +322,7 @@
                 </li>
             </ul>
         </div>
-        <div class="col-span-1 sm:col-span-2 md:col-span-4 mt-6 pt-6 border-t border-white/20 text-center text-xs md:text-sm opacity-80">
+        <div class="col-span-1 sm:col-span-2 md:col-span-4 pt-6 border-t border-white/20 text-center text-xs md:text-sm opacity-80">
             © {{ date('Y') }} NeusPhone. Todos los derechos reservados.
         </div>
     </footer>

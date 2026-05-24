@@ -67,8 +67,8 @@
             <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">NeusPhone</h4>
             <p class="text-xs md:text-sm opacity-80 leading-relaxed">Venta y reparación de dispositivos electrónicos.</p>
             <!-- Logo -->
-            <div class="mt-6 flex justify-center w-full">
-                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-80 drop-shadow-md" />
+            <div class="mt-0 flex justify-center w-full">
+                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-100 drop-shadow-md" />
             </div>
         </div>
         <!-- Contacto -->
@@ -134,8 +134,8 @@
                 </li>
             </ul>
         </div>
-        <div class="col-span-1 sm:col-span-2 md:col-span-4 mt-6 pt-6 border-t border-white/20 text-center text-xs md:text-sm opacity-80">
-            ©2026 NeusPhone. Todos los derechos reservados.
+        <div class="col-span-1 sm:col-span-2 md:col-span-4 pt-6 border-t border-white/20 text-center text-xs md:text-sm opacity-80">
+            ©2026 NeusPhone. Panel Administrativo.
         </div>
     </footer>
     </div>
