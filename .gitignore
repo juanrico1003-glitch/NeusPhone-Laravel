@@ -39,3 +39,7 @@
 /bootstrap/cache/*
 !/bootstrap/cache/.gitignore
 !/bootstrap/cache/.gitkeep
+
+/public/productos/*
+
+/public/build/
