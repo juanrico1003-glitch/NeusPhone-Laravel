@@ -37,6 +37,22 @@
     <div class="gsap-float-rev absolute bottom-20 md:bottom-40 right-5 md:right-10 lg:right-32 opacity-20 text-indigo-600 hidden sm:block">
         <svg class="w-20 md:w-28 h-20 md:h-28" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
     </div>
+    <!-- Laptop -->
+    <div class="gsap-float absolute top-10 md:top-20 right-5 md:right-10 lg:right-32 opacity-20 text-blue-600 hidden sm:block">
+        <svg class="w-16 md:w-24 h-16 md:h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+    </div>
+    <!-- Reloj -->
+    <div class="gsap-float-rev absolute bottom-20 md:bottom-40 left-5 md:left-10 lg:left-32 opacity-20 text-indigo-600 hidden sm:block">
+        <svg class="w-16 md:w-24 h-16 md:h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M20 12c0-2.54-1.19-4.81-3.04-6.27L16 0H8l-.96 5.73C5.19 7.19 4 9.45 4 12s1.19 4.81 3.04 6.27L8 24h8l.96-5.73C18.81 16.81 20 14.54 20 12zm-6 8h-4v-1h4v1zm0-2h-4v-1h4v1zm-2-11c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/></svg>
+    </div>
+    <!-- Audifonos -->
+    <div class="gsap-float-center absolute top-0 md:top-8 left-1/2 -translate-x-1/2 opacity-20 text-blue-600 hidden sm:block">
+        <svg class="w-16 md:w-24 h-16 md:h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1c-4.97 0-9 4.03-9 9v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-4v8h3c1.66 0 3-1.34 3-3v-7c0-4.97-4.03-9-9-9z"/></svg>
+    </div>
+    <!-- Memoria RAM -->
+    <div class="gsap-float-center-rev absolute bottom-20 md:bottom-40 left-1/2 -translate-x-1/2 opacity-20 text-indigo-600 hidden sm:block">
+        <svg class="w-16 md:w-24 h-16 md:h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z"/></svg>
+    </div>
 
     <!-- Contenido y Slogan -->
     <div class="z-10 text-center mt-12 md:mt-32 max-w-4xl">
@@ -181,7 +197,7 @@
     </div>
 </div>
 
-<!-- Quiénes somos -->
+<!-- Quienes somos -->
 <div id="quienes-somos" class="max-w-7xl mx-auto px-4 md:px-6 py-16 md:py-24 mt-10">
     <div class="glass p-8 md:p-12 rounded-3xl shadow-[0_20px_40px_rgba(0,64,128,0.1)] border border-white flex flex-col md:flex-row items-center gap-8 md:gap-12 relative overflow-hidden">
         <!-- Decoracion de fondo -->
@@ -281,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    /* Animaciones con GSAP */
+    // Animaciones con GSAP 
     window.addEventListener('load', () => {
         if (typeof window.gsap !== 'undefined') {
             const gsap = window.gsap;
@@ -302,6 +318,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 rotation: -5,
                 duration: 3.5,
                 ease: "power1.inOut",
+                yoyo: true,
+                repeat: -1
+            });
+
+            // Animacion de los audifonos centro arriba
+            gsap.to(".gsap-float-center", {
+                y: -15,
+                rotation: 8,
+                scale: 1.05,
+                duration: 4,
+                ease: "sine.inOut",
+                yoyo: true,
+                repeat: -1
+            });
+
+            // Animacion de la memoria RAM centro abajo
+            gsap.to(".gsap-float-center-rev", {
+                y: 15,
+                rotation: -8,
+                scale: 0.95,
+                duration: 4.5,
+                ease: "sine.inOut",
                 yoyo: true,
                 repeat: -1
             });

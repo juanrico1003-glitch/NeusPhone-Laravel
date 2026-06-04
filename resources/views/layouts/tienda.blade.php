@@ -20,12 +20,13 @@
 
     <!-- Barra de navegación -->
     <nav class="bg-[#004080] shadow-md rounded-lg md:rounded-xl border-white m-2">
-        <div class="max-w-7xl mx-auto px-3 md:px-6 py-3 md:py-4">
+        <div class="max-w-7xl mx-auto px-3 md:px-6 py-1 md:py-2">
             
             <!-- Vista móvil -->
             <div class="md:hidden">
                 <div class="flex items-center justify-between gap-2 mb-3">
-                    <a href="{{ route('dashboard.main') }}" class="text-xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
+                    <a href="{{ route('dashboard.main') }}" class="flex items-center gap-2 text-xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
+                        <img src="{{ asset('logo.png') }}" alt="Logo" class="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
                         NeusPhone
                     </a>
                     <!-- Botones derechos -->
@@ -109,7 +110,8 @@
 
             <!-- Vista PC -->
             <div class="hidden md:flex items-center justify-between gap-6">
-                <a href="{{ route('dashboard.main') }}" class="text-2xl md:text-3xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
+                <a href="{{ route('dashboard.main') }}" class="flex items-center gap-2 text-2xl md:text-3xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
+                    <img src="{{ asset('logo.png') }}" alt="Logo" class="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
                     NeusPhone
                 </a>
                 <form method="GET" action="{{ route('tienda') }}" class="flex-1 max-w-md">

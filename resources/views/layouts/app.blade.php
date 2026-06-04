@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased relative bg-blue-50 overflow-x-hidden">
+<body class="font-sans relative bg-blue-50 overflow-x-hidden">
     @if (!request()->routeIs('dashboard.main'))
         <div class="fixed top-1/2 left-1/2 
                     -translate-x-1/2 -translate-y-1/2 
@@ -28,10 +28,11 @@
     <div class="min-h-screen flex flex-col">
         <!-- Navbar -->
         <nav class="bg-[#004080] shadow-md rounded-lg md:rounded-xl border-white m-2">
-            <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 flex justify-between items-center">
+            <div class="max-w-7xl mx-auto px-6 md:px-6 py-1 md:py-2 flex justify-between items-center">
                 <!-- Logo -->
                 <a href="{{ route('dashboard.main') }}"
-                   class="text-xl md:text-2xl font-bold text-white hover:text-blue-200 transition whitespace-nowrap">
+                   class="flex items-center gap-2 text-2xl md:text-3xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
+                    <img src="{{ asset('logo.png') }}" alt="Logo" class="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
                     NeusPhone
                 </a>
                 <!-- Usuario -->

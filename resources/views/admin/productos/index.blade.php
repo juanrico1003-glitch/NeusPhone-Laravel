@@ -34,7 +34,7 @@
 
                             <td class="p-3">
                                 @if(!empty($producto->imagenes))
-                                    <img src="{{ asset('productos/'.$producto->imagenes[0]) }}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded" alt="{{ $producto->nombre }}">
+                                    <img src="{{ asset('productos/'.$producto->imagenes[0]) }}" class="w-12 h-12 md:w-16 md:h-16 object-contain rounded" alt="{{ $producto->nombre }}">
                                 @else
                                     <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400">Sin img</div>
                                 @endif
@@ -117,7 +117,7 @@
                         <!-- Imagen -->
                         <div class="flex-shrink-0">
                             @if(!empty($producto->imagenes))
-                                <img src="{{ asset('productos/'.$producto->imagenes[0]) }}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded" alt="{{ $producto->nombre }}">
+                                <img src="{{ asset('productos/'.$producto->imagenes[0]) }}" class="w-16 h-16 md:w-20 md:h-20 object-contain rounded" alt="{{ $producto->nombre }}">
                             @else
                                 <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs text-center">Sin img</div>
                             @endif
