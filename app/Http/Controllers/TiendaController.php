@@ -34,7 +34,7 @@ class TiendaController extends Controller
         }
 
         $productos = $query->get();
-        $marcas = \Database\Seeders\ProductoOpcionesSeeder::marcas();
+        $marcas = collect(\Database\Seeders\ProductoOpcionesSeeder::marcas())->flatten()->unique()->sort()->values()->all();
 
         return view('tienda.index', compact('productos', 'marcas'));
     }
@@ -42,6 +42,8 @@ class TiendaController extends Controller
     // Mostrar detalle del producto
     public function show(int $id)
     {
+        Producto::where('id', $id)->where('estado', 1)->increment('visitas');
+
         $producto = \App\Models\Producto::with(['categoria', 'testimonios' => function($q) {
             $q->where('estado', 1)->with('usuario');
         }])

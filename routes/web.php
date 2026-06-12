@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ProductoController;
 use App\Http\Controllers\Admin\PedidoAdminController;
 use App\Http\Controllers\Admin\ServicioAdminController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TiendaController;
 use App\Http\Controllers\CarritoController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\PedidoController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\TestimonioController;
 use App\Http\Controllers\ChatbotController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\WompiController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,6 +52,22 @@ Route::get('/carrito/eliminar/{id}', [CarritoController::class, 'eliminar'])
 Route::post('/carrito/confirmar', [CarritoController::class, 'confirmar'])
     ->middleware('auth')
     ->name('carrito.confirmar');
+
+// Checkout y Pago (Wompi)
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/pagar/{id}', [CheckoutController::class, 'pagar'])->name('checkout.pagar');
+    Route::get('/checkout/resultado', [WompiController::class, 'callback'])->name('checkout.resultado');
+});
+
+// Simulación de pago para desarrollo (WOMPI_SIMULATED=true)
+Route::get('/checkout/simular', [WompiController::class, 'simular'])
+    ->middleware('auth')
+    ->name('checkout.simular');
+
+// Webhook Wompi (público)
+Route::post('/wompi/webhook', [WompiController::class, 'webhook'])->name('wompi.webhook');
 
     // Chatbot
     Route::post('/chatbot', [ChatbotController::class, 'send']);
@@ -123,6 +142,20 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::post('/admin/servicios/{id}/estado', [ServicioAdminController::class, 'cambiarEstado'])
         ->name('admin.servicios.estado');
+
+    // Usuarios admin
+    Route::get('/admin/usuarios', [UserController::class, 'index'])
+        ->name('admin.usuarios.index');
+    Route::get('/admin/usuarios/crear', [UserController::class, 'create'])
+        ->name('admin.usuarios.create');
+    Route::post('/admin/usuarios', [UserController::class, 'store'])
+        ->name('admin.usuarios.store');
+    Route::get('/admin/usuarios/{usuario}/editar', [UserController::class, 'edit'])
+        ->name('admin.usuarios.edit');
+    Route::put('/admin/usuarios/{usuario}', [UserController::class, 'update'])
+        ->name('admin.usuarios.update');
+    Route::delete('/admin/usuarios/{usuario}', [UserController::class, 'destroy'])
+        ->name('admin.usuarios.destroy');
 
     // Testimonios admin
     Route::get('/admin/testimonios', [AdminController::class, 'testimonios'])

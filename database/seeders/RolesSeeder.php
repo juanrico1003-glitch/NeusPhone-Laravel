@@ -9,7 +9,7 @@ class RolesSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('roles')->insert([
+        DB::table('roles')->insertOrIgnore([
             ['nombre' => 'Admin'],
             ['nombre' => 'Cliente'],
         ]);

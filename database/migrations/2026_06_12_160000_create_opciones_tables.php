@@ -1,0 +1,54 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('marcas', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->string('nombre', 100);
+            $table->timestamps();
+        });
+
+        Schema::create('colores', function (Blueprint $table) {
+            $table->id();
+            $table->string('nombre', 50);
+            $table->timestamps();
+        });
+
+        Schema::create('rams', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->string('nombre', 50);
+            $table->timestamps();
+        });
+
+        Schema::create('almacenamientos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->string('nombre', 50);
+            $table->timestamps();
+        });
+
+        Schema::create('category_field_configs', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
+            $table->string('campo', 50);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('category_field_configs');
+        Schema::dropIfExists('almacenamientos');
+        Schema::dropIfExists('rams');
+        Schema::dropIfExists('colores');
+        Schema::dropIfExists('marcas');
+    }
+};

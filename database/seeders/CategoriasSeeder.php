@@ -9,12 +9,31 @@ class CategoriasSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('categorias')->insert([
+        $categorias = [
             ['nombre' => 'Celulares'],
-            ['nombre' => 'PC'],
+            ['nombre' => 'Laptop'],
+            ['nombre' => 'Tablets'],
+            ['nombre' => 'Portátiles'],
+            ['nombre' => 'PC Escritorio'],
+            ['nombre' => 'Monitores'],
+            ['nombre' => 'Televisores'],
+            ['nombre' => 'Smartwatches'],
             ['nombre' => 'Audífonos'],
+            ['nombre' => 'Parlantes y Equipos de Sonido'],
             ['nombre' => 'Radios'],
-            ['nombre' => 'Memorias'],
-        ]);
+            ['nombre' => 'Memorias RAM'],
+            ['nombre' => 'Discos SSD'],
+            ['nombre' => 'Discos HDD'],
+            ['nombre' => 'Tarjetas Gráficas'],
+            ['nombre' => 'Teclados'],
+            ['nombre' => 'Ratones'],
+            ['nombre' => 'Cables y Accesorios'],
+        ];
+
+        foreach ($categorias as $cat) {
+            if (!DB::table('categorias')->where('nombre', $cat['nombre'])->exists()) {
+                DB::table('categorias')->insert($cat);
+            }
+        }
     }
 }

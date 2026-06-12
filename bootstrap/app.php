@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Excepciones de CSRF para el Chatbot
         $middleware->validateCsrfTokens(except: [
             'chatbot',
+            'wompi/webhook',
         ]);
 
         // Correccion del alias para el middleware admin

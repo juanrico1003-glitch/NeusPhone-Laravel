@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Producto;
-use App\Models\Pedido;
-use App\Models\PedidoDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,22 +16,25 @@ class CarritoController extends Controller
         return view('carrito.index', compact('carrito'));
     }
 
-    // Agregar producto
-    public function agregar(int $id)
+    public function agregar(Request $request, int $id)
     {
         $producto = Producto::findOrFail($id);
 
         if ($producto->stock <= 0) {
-            return back()->with('error', 'Producto agotado');
+            return $request->expectsJson()
+                ? response()->json(['error' => 'Producto agotado'], 400)
+                : back()->with('error', 'Producto agotado');
         }
 
         $carrito = session()->get('carrito', []);
-        // Cantidad actual en carrito
         $cantidadEnCarrito = isset($carrito[$id]) ? $carrito[$id]['cantidad'] : 0;
-        // Si intenta superar el stock
+
         if ($cantidadEnCarrito >= $producto->stock) {
-            return back()->with('error', 'No hay más unidades disponibles');
+            return $request->expectsJson()
+                ? response()->json(['error' => 'No hay más unidades disponibles'], 400)
+                : back()->with('error', 'No hay más unidades disponibles');
         }
+
         if (isset($carrito[$id])) {
             $carrito[$id]['cantidad']++;
         } else {
@@ -46,6 +47,20 @@ class CarritoController extends Controller
         }
 
         session()->put('carrito', $carrito);
+
+        if ($request->expectsJson()) {
+            $imagen = !empty($producto->imagenes) ? $producto->imagenes[0] : 'default.png';
+            return response()->json([
+                'success' => true,
+                'producto' => [
+                    'id' => $producto->id,
+                    'nombre' => $producto->nombre,
+                    'precio' => $producto->precio,
+                    'imagen_url' => asset('productos/' . $imagen),
+                ],
+                'carrito_count' => count(session()->get('carrito', [])),
+            ]);
+        }
 
         return back()->with('success', 'Producto agregado al carrito');
     }
@@ -63,51 +78,15 @@ class CarritoController extends Controller
         return back();
     }
 
-    // Confirmar compra y crear pedido
+    // Ir al checkout
     public function confirmar()
     {
         $carrito = session()->get('carrito', []);
 
         if (empty($carrito)) {
-            return back();
+            return redirect()->route('tienda')->with('error', 'El carrito está vacío');
         }
 
-        $total = 0;
-
-        foreach ($carrito as $item) {
-            $total += $item['precio'] * $item['cantidad'];
-        }
-
-        // Crear pedido
-        $pedido = Pedido::create([
-            'usuario_id' => Auth::id(),
-            'total' => $total,
-            'estado' => 'pendiente'
-        ]);
-
-        // Guardar productos y descontar stock
-        foreach ($carrito as $id => $item) {
-
-            PedidoDetalle::create([
-                'pedido_id' => $pedido->id,
-                'producto_id' => $id,
-                'cantidad' => $item['cantidad'],
-                'precio' => $item['precio']
-            ]);
-
-            // Descontar inventario
-            $producto = Producto::find($id);
-
-            if ($producto) {
-                $producto->stock -= $item['cantidad'];
-                $producto->save();
-            }
-        }
-
-        // Vaciar carrito
-        session()->forget('carrito');
-
-        return redirect()->route('tienda')
-            ->with('success', 'Pedido realizado correctamente');
+        return redirect()->route('checkout.index');
     }
 }

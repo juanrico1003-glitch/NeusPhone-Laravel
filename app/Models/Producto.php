@@ -18,6 +18,7 @@ class Producto extends Model
         'almacenamiento',
         'precio',
         'stock',
+        'visitas',
         'descripcion',
         'caracteristicas',
         'imagenes',

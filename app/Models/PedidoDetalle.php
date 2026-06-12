@@ -15,8 +15,18 @@ class PedidoDetalle extends Model
     'precio'
 ];
 
+public function pedido()
+{
+    return $this->belongsTo(\App\Models\Pedido::class, 'pedido_id');
+}
+
 public function producto()
 {
     return $this->belongsTo(\App\Models\Producto::class, 'producto_id');
+}
+
+public function getPrecioUnitarioAttribute()
+{
+    return $this->precio;
 }
 }

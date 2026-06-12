@@ -4,40 +4,46 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Categoria;
 use App\Models\Producto;
 
 class ProductoController extends Controller
 {
-    // Mostrar listado de productos
     public function index()
     {
-        // Traemos productos con relaciones
         $productos = Producto::with(['categoria'])->get();
-
         return view('admin.productos.index', compact('productos'));
     }
 
-    // Mostrar formulario para crear producto
-
     public function create()
     {
-        // Traemos datos para los selects
         $categorias = Categoria::where('estado', 1)->get();
-        $marcas = \Database\Seeders\ProductoOpcionesSeeder::marcas();
-        $colores = \Database\Seeders\ProductoOpcionesSeeder::colores();
-        $almacenamientos = \Database\Seeders\ProductoOpcionesSeeder::almacenamientos();
-        $rams = \Database\Seeders\ProductoOpcionesSeeder::rams();
+        $colores = DB::table('colores')->pluck('nombre');
+
+        $marcasPorCategoria = DB::table('marcas')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('nombre'));
+
+        $ramsPorCategoria = DB::table('rams')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('nombre'));
+
+        $almacenamientosPorCategoria = DB::table('almacenamientos')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('nombre'));
+
+        $fieldConfigs = DB::table('category_field_configs')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('campo'));
 
         return view('admin.productos.create', compact(
-            'categorias',
-            'marcas',
-            'colores',
-            'almacenamientos',
-            'rams'
+            'categorias', 'colores',
+            'marcasPorCategoria', 'ramsPorCategoria',
+            'almacenamientosPorCategoria', 'fieldConfigs'
         ));
     }
-    // Guardar nuevo producto en la base de datos
+
     public function store(Request $request)
     {
         $request->validate([
@@ -47,9 +53,8 @@ class ProductoController extends Controller
             'precio' => 'required|numeric',
             'stock' => 'required|integer',
         ]);
-        // Procesar imagenes
-        $nombresImagenes = [];
 
+        $nombresImagenes = [];
         if ($request->hasFile('imagenes')) {
             foreach ($request->file('imagenes') as $imagen) {
                 $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
@@ -57,6 +62,7 @@ class ProductoController extends Controller
                 $nombresImagenes[] = $nombreImagen;
             }
         }
+
         Producto::create([
             'categoria_id' => $request->categoria_id,
             'marca' => $request->marca,
@@ -75,33 +81,40 @@ class ProductoController extends Controller
 
         return redirect()->route('admin.productos.index');
     }
-    // Mostrar un producto específico
+
     public function show(string $id)
     {
-        // Detalle del producto
     }
-    // Mostrar formulario de edicion
+
     public function edit(string $id)
     {
         $producto = Producto::findOrFail($id);
-
         $categorias = Categoria::where('estado', 1)->get();
-        $marcas = \Database\Seeders\ProductoOpcionesSeeder::marcas();
-        $colores = \Database\Seeders\ProductoOpcionesSeeder::colores();
-        $almacenamientos = \Database\Seeders\ProductoOpcionesSeeder::almacenamientos();
-        $rams = \Database\Seeders\ProductoOpcionesSeeder::rams();
+        $colores = DB::table('colores')->pluck('nombre');
+
+        $marcasPorCategoria = DB::table('marcas')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('nombre'));
+
+        $ramsPorCategoria = DB::table('rams')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('nombre'));
+
+        $almacenamientosPorCategoria = DB::table('almacenamientos')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('nombre'));
+
+        $fieldConfigs = DB::table('category_field_configs')->get()
+            ->groupBy('categoria_id')
+            ->map(fn($items) => $items->pluck('campo'));
 
         return view('admin.productos.edit', compact(
-            'producto',
-            'categorias',
-            'marcas',
-            'colores',
-            'almacenamientos',
-            'rams'
+            'producto', 'categorias', 'colores',
+            'marcasPorCategoria', 'ramsPorCategoria',
+            'almacenamientosPorCategoria', 'fieldConfigs'
         ));
     }
 
-    // Actualizar producto
     public function update(Request $request, string $id)
     {
         $producto = Producto::findOrFail($id);
@@ -133,7 +146,6 @@ class ProductoController extends Controller
             ->with('success', 'Producto actualizado');
     }
 
-    // Eliminar producto
     public function destroy(string $id)
     {
         $producto = Producto::findOrFail($id);
@@ -143,7 +155,6 @@ class ProductoController extends Controller
             ->with('success', 'Producto eliminado');
     }
 
-    // Cambiar estado
     public function toggleEstado(int $id)
     {
         $producto = Producto::findOrFail($id);

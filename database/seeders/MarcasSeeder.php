@@ -3,32 +3,13 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
-class ProductoOpcionesSeeder extends Seeder
+class MarcasSeeder extends Seeder
 {
     public function run(): void
     {
-    }
-
-    public static function colores()
-    {
-        return [
-            'Negro', 'Blanco', 'Gris', 'Plateado', 'Dorado',
-            'Azul', 'Rojo', 'Verde', 'Amarillo', 'Naranja',
-            'Rosa', 'Morado', 'Violeta', 'Turquesa', 'Cian',
-            'Marrón', 'Beige', 'Crema', 'Coral', 'Lavanda',
-            'Menta', 'Oliva', 'Mostaza', 'Borgoña', 'Granate',
-            'Carbón', 'Titanio', 'Grafito', 'Aluminio', 'Bronce',
-            'Cobre', 'Champán', 'Blanco Perla', 'Negro Mate',
-            'Azul Medianoche', 'Verde Esmeralda', 'Rojo Rubí',
-            'Azul Celeste', 'Gris Espacial', 'Rosa Oro',
-            'Azul Zafiro', 'Verde Bosque', 'Púrpura', 'Transparente',
-        ];
-    }
-
-    public static function marcas()
-    {
-        return [
+        $marcas = [
             'Celulares' => [
                 'Samsung', 'Apple', 'Xiaomi', 'Huawei', 'Oppo',
                 'Vivo', 'OnePlus', 'Google', 'Motorola', 'Nokia',
@@ -47,33 +28,21 @@ class ProductoOpcionesSeeder extends Seeder
                 'Doogee', 'Oukitel', 'Vastking', 'Dragon Touch', 'Huion',
                 'Wacom', 'Xp Pen', 'Kamvas',
             ],
-            'Laptop' => [
-                'Acer', 'Alienware', 'Apple', 'AORUS', 'ASRock', 'Asus',
-                'Avita', 'Clevo', 'Chuwi', 'Corsair', 'CyberPowerPC', 'Dell',
-                'Dynabook', 'Fujitsu', 'Framework', 'Gigabyte', 'Google', 'GPD',
-                'Hasee', 'Honor', 'HP', 'Huawei', 'Intel', 'Jumper',
-                'LG', 'Lenovo', 'Maingear', 'Medion', 'Microsoft', 'Minisforum',
-                'MSI', 'NZXT', 'One Netbook', 'Origin PC', 'Panasonic', 'Razer',
-                'Samsung', 'Schenker', 'System76', 'Toshiba', 'Tuxedo', 'VAIO',
-                'Velocity Micro', 'Xiaomi', 'XMG', 'Zotac',
-            ],
             'Portátiles' => [
-                'Acer', 'Alienware', 'Apple', 'AORUS', 'ASRock', 'Asus',
-                'Avita', 'Clevo', 'Chuwi', 'Corsair', 'CyberPowerPC', 'Dell',
-                'Dynabook', 'Fujitsu', 'Framework', 'Gigabyte', 'Google', 'GPD',
-                'Hasee', 'Honor', 'HP', 'Huawei', 'Intel', 'Jumper',
-                'LG', 'Lenovo', 'Maingear', 'Medion', 'Microsoft', 'Minisforum',
-                'MSI', 'NZXT', 'One Netbook', 'Origin PC', 'Panasonic', 'Razer',
-                'Samsung', 'Schenker', 'System76', 'Toshiba', 'Tuxedo', 'VAIO',
-                'Velocity Micro', 'Xiaomi', 'XMG', 'Zotac',
+                'Apple', 'Dell', 'HP', 'Lenovo', 'Asus',
+                'Acer', 'MSI', 'Razer', 'Samsung', 'Huawei',
+                'Xiaomi', 'Microsoft', 'LG', 'Gigabyte', 'Google',
+                'Framework', 'System76', 'Tuxedo', 'Clevo', 'Toshiba',
+                'Sony (VAIO)', 'Fujitsu', 'Panasonic', 'Dynabook', 'Chuwi',
+                'One Netbook', 'GPD', 'AYANEO',
             ],
             'PC Escritorio' => [
-                'Acer', 'Alienware', 'Apple', 'ASRock', 'Asus', 'Azulle',
-                'Beelink', 'CLX', 'Cooler Master', 'Corsair', 'CyberPowerPC', 'Dell',
-                'Digital Storm', 'Falcon Northwest', 'Gigabyte', 'HP', 'iBuyPower',
-                'Intel', 'Lenovo', 'Maingear', 'Minisforum', 'MSI', 'NZXT',
-                'Origin PC', 'Puget Systems', 'Samsung', 'Shuttle', 'Skytech',
-                'Thermaltake', 'Velztorm', 'Zotac',
+                'Dell', 'HP', 'Lenovo', 'Apple', 'Asus',
+                'Acer', 'MSI', 'Corsair', 'CyberPowerPC', 'NZXT',
+                'Alienware', 'Origin PC', 'Falcon Northwest', 'Puget Systems', 'Maingear',
+                'iBuyPower', 'Skytech', 'CLX', 'Digital Storm', 'Velztorm',
+                'Samsung', 'Intel (NUC)', 'Gigabyte', 'Zotac', 'Minisforum',
+                'Beelink', 'ASRock', 'Intel', 'AMD',
             ],
             'Monitores' => [
                 'Dell', 'LG', 'Samsung', 'BenQ', 'Asus',
@@ -96,7 +65,7 @@ class ProductoOpcionesSeeder extends Seeder
                 'Google (Pixel)', 'Suunto', 'Polar', 'Coros', 'Withings',
                 'Fossil', 'Mobvoi (TicWatch)', 'Skagen', 'Michael Kors', 'Hublot',
                 'Tag Heuer', 'Montblanc', 'OnePlus', 'CMF by Nothing', 'Hayo',
-                'Diesel', 'Emporio Armani', 'Citizen', 'Garmin',
+                'Diesel', 'Emporio Armani', 'Citizen',
             ],
             'Audífonos' => [
                 'Sony', 'Bose', 'Sennheiser', 'Audio-Technica', 'Beyerdynamic',
@@ -145,11 +114,11 @@ class ProductoOpcionesSeeder extends Seeder
                 'Maxtor', 'Fujitsu', 'ExcelStor',
             ],
             'Tarjetas Gráficas' => [
-                'AMD', 'AFOX', 'ASRock', 'Asus', 'BIOSTAR', 'Club 3D', 'Colorful',
-                'Diamond', 'ELSA', 'EVGA', 'Gainward', 'Galax', 'Gigabyte',
-                'HIS', 'Inno3D', 'Leadtek', 'Manli', 'Maxsun', 'MSI',
-                'Nvidia', 'Palit', 'PNY', 'PowerColor', 'Sapphire', 'Sparkle',
-                'Triplex', 'VisionTek', 'XFX', 'Yeston', 'Zotac',
+                'Nvidia', 'AMD', 'Asus', 'MSI', 'Gigabyte',
+                'Zotac', 'PNY', 'Palit', 'Gainward', 'Sapphire',
+                'PowerColor', 'XFX', 'ASRock', 'Colorful', 'Galax',
+                'Inno3D', 'Manli', 'AFOX', 'Leadtek', 'EVGA',
+                'VisionTek', 'Diamond', 'HIS', 'Club 3D', 'Maxsun',
             ],
             'Teclados' => [
                 'Logitech', 'Corsair', 'Razer', 'SteelSeries', 'HyperX (HP)',
@@ -177,75 +146,17 @@ class ProductoOpcionesSeeder extends Seeder
                 'ORICO', 'Satechi', 'Twelve South', 'Anker (PowerLine)', 'Amazon Basics',
             ],
         ];
-    }
 
-    public static function rams()
-    {
-        return [
-            'Celulares' => ['2 GB', '3 GB', '4 GB', '6 GB', '8 GB', '12 GB', '16 GB', '24 GB'],
-            'Tablets' => ['2 GB', '3 GB', '4 GB', '6 GB', '8 GB', '12 GB', '16 GB', '24 GB', '32 GB'],
-            'Portátiles' => ['4 GB', '8 GB', '12 GB', '16 GB', '24 GB', '32 GB', '48 GB', '64 GB', '96 GB', '128 GB'],
-            'PC Escritorio' => ['4 GB', '8 GB', '12 GB', '16 GB', '24 GB', '32 GB', '48 GB', '64 GB', '96 GB', '128 GB', '256 GB'],
-            'Smartwatches' => ['512 MB', '1 GB', '2 GB', '3 GB', '4 GB', '6 GB', '8 GB'],
-            'Memorias RAM' => [
-                '4 GB DDR3', '8 GB DDR3', '16 GB DDR3', '32 GB DDR3',
-                '4 GB DDR4', '8 GB DDR4', '16 GB DDR4', '32 GB DDR4', '64 GB DDR4',
-                '8 GB DDR5', '16 GB DDR5', '32 GB DDR5', '48 GB DDR5', '64 GB DDR5', '96 GB DDR5', '128 GB DDR5',
-                '8 GB LPDDR4', '16 GB LPDDR4', '32 GB LPDDR4',
-                '8 GB LPDDR5', '16 GB LPDDR5', '32 GB LPDDR5', '64 GB LPDDR5',
-                '16 GB LPDDR5X', '24 GB LPDDR5X', '32 GB LPDDR5X',
-            ],
-            'Tarjetas Gráficas' => [
-                '2 GB GDDR5', '4 GB GDDR5', '6 GB GDDR5', '8 GB GDDR5',
-                '4 GB GDDR6', '6 GB GDDR6', '8 GB GDDR6', '10 GB GDDR6', '12 GB GDDR6',
-                '16 GB GDDR6', '20 GB GDDR6', '24 GB GDDR6',
-                '8 GB GDDR6X', '12 GB GDDR6X', '16 GB GDDR6X', '24 GB GDDR6X',
-                '4 GB GDDR3', '8 GB HBM2', '16 GB HBM2', '32 GB HBM2', '64 GB HBM2',
-            ],
-        ];
-    }
+        foreach ($marcas as $categoriaNombre => $brands) {
+            $catId = DB::table('categorias')->where('nombre', $categoriaNombre)->value('id');
+            if (!$catId) continue;
 
-    public static function almacenamientos()
-    {
-        return [
-            'Celulares' => ['16 GB', '32 GB', '64 GB', '128 GB', '256 GB', '512 GB', '1 TB'],
-            'Tablets' => ['16 GB', '32 GB', '64 GB', '128 GB', '256 GB', '512 GB', '1 TB', '2 TB'],
-            'Portátiles' => ['64 GB', '128 GB', '256 GB', '512 GB', '1 TB', '2 TB', '4 TB', '8 TB'],
-            'PC Escritorio' => ['128 GB', '256 GB', '512 GB', '1 TB', '2 TB', '4 TB', '8 TB', '16 TB', '20 TB'],
-            'Smartwatches' => ['4 GB', '8 GB', '16 GB', '32 GB', '64 GB', '128 GB'],
-            'Discos SSD' => [
-                '120 GB', '240 GB', '256 GB', '480 GB', '500 GB', '512 GB',
-                '960 GB', '1 TB', '2 TB', '4 TB', '8 TB', '16 TB', '30 TB',
-            ],
-            'Discos HDD' => [
-                '160 GB', '250 GB', '320 GB', '500 GB', '750 GB',
-                '1 TB', '2 TB', '3 TB', '4 TB', '5 TB', '6 TB', '8 TB',
-                '10 TB', '12 TB', '14 TB', '16 TB', '18 TB', '20 TB', '22 TB', '24 TB',
-            ],
-        ];
-    }
-
-    public static function fieldConfigs()
-    {
-        return [
-            'Celulares' => ['color', 'ram', 'almacenamiento'],
-            'Laptop' => ['ram', 'almacenamiento'],
-            'Tablets' => ['color', 'ram', 'almacenamiento'],
-            'Portátiles' => ['color', 'ram', 'almacenamiento'],
-            'PC Escritorio' => ['ram', 'almacenamiento'],
-            'Monitores' => ['color'],
-            'Televisores' => ['color'],
-            'Smartwatches' => ['color', 'ram', 'almacenamiento'],
-            'Audífonos' => ['color'],
-            'Parlantes y Equipos de Sonido' => ['color'],
-            'Radios' => ['color'],
-            'Memorias RAM' => ['ram'],
-            'Discos SSD' => ['almacenamiento'],
-            'Discos HDD' => ['almacenamiento'],
-            'Tarjetas Gráficas' => ['ram'],
-            'Teclados' => ['color'],
-            'Ratones' => ['color'],
-            'Cables y Accesorios' => ['color'],
-        ];
+            foreach ($brands as $brand) {
+                DB::table('marcas')->insertOrIgnore([
+                    'categoria_id' => $catId,
+                    'nombre' => $brand,
+                ]);
+            }
+        }
     }
 }

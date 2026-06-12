@@ -60,12 +60,9 @@
                     </span>
                 </div>
                 
-                <form action="{{ route('carrito.confirmar') }}" method="POST">
-                    @csrf
-                    <button class="w-full mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold px-6 py-3 md:py-4 rounded-lg transition transform hover:scale-105 active:scale-95">
-                        ✓ Confirmar compra
-                    </button>
-                </form>
+                <a href="{{ route('checkout.index') }}" class="block w-full text-center mt-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold px-6 py-3 md:py-4 rounded-lg transition transform hover:scale-105 active:scale-95">
+                    ✓ Confirmar compra
+                </a>
 
                 <a href="{{ route('tienda') }}" class="block w-full mt-3 text-center bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-6 py-3 rounded-lg transition">
                     ← Seguir comprando

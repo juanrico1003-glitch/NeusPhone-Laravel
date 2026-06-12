@@ -13,6 +13,11 @@ class DatabaseSeeder extends Seeder
             UsuariosSeeder::class,
             CategoriasSeeder::class,
             ServiciosSeeder::class,
+            ColoresSeeder::class,
+            MarcasSeeder::class,
+            RamsSeeder::class,
+            AlmacenamientosSeeder::class,
+            CategoryFieldConfigSeeder::class,
             ProductoOpcionesSeeder::class,
         ]);
     }

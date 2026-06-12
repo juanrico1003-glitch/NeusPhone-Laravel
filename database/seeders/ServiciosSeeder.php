@@ -9,7 +9,7 @@ class ServiciosSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('servicios')->insert([
+        DB::table('servicios')->insertOrIgnore([
             ['nombre' => 'Cambio de Pantalla', 'descripcion' => null],
             ['nombre' => 'Cambio de Batería', 'descripcion' => null],
             ['nombre' => 'Reparación de Placa', 'descripcion' => null],

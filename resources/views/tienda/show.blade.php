@@ -200,12 +200,13 @@
 
                 <!-- Botones de Accion -->
                 <div class="mt-6 mb-6 flex flex-col gap-3">
-                    <form action="{{ route('carrito.agregar', $producto->id) }}" method="POST">
+                    <button id="btn-agregar-carrito" data-producto-id="{{ $producto->id }}"
+                            {{ $producto->stock <= 0 ? 'disabled' : '' }}
+                            class="w-full {{ $producto->stock <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800' }} text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-lg transition transform {{ $producto->stock > 0 ? 'hover:shadow-lg active:scale-95' : '' }}">
+                        {{ $producto->stock > 0 ? '🛒 Agregar al carrito' : '✕ Agotado' }}
+                    </button>
+                    <form id="form-agregar-carrito" action="{{ route('carrito.agregar', $producto->id) }}" method="POST" class="hidden">
                         @csrf
-                        <button {{ $producto->stock <= 0 ? 'disabled' : '' }}
-                                class="w-full {{ $producto->stock <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800' }} text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-lg transition transform {{ $producto->stock > 0 ? 'hover:shadow-lg active:scale-95' : '' }}">
-                            {{ $producto->stock > 0 ? '🛒 Agregar al carrito' : '✕ Agotado' }}
-                        </button>
                     </form>
 
                     @php
@@ -315,4 +316,110 @@
             @endif
         </div>
     </div>
+
+    <!-- Modal de Confirmación al agregar al carrito -->
+    <div id="modal-carrito" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all duration-300 scale-95">
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-4 flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="text-white font-bold text-sm">Agregado al carrito</p>
+            </div>
+            <div class="p-4 flex gap-4">
+                <img id="modal-producto-img" src="" alt=""
+                     class="w-20 h-20 object-contain rounded-lg border border-gray-100 bg-white shrink-0">
+                <div class="min-w-0 flex-1">
+                    <p id="modal-producto-nombre" class="font-bold text-gray-800 text-sm leading-tight mb-1 line-clamp-2"></p>
+                    <p id="modal-producto-precio" class="text-green-600 font-extrabold text-base"></p>
+                </div>
+            </div>
+            <div class="px-4 pb-4 flex flex-col gap-2.5">
+                <a href="{{ route('carrito.index') }}"
+                   class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-3 rounded-xl text-center text-sm transition">
+                    Ir al carrito
+                </a>
+                <a href="{{ route('tienda') }}"
+                   class="w-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 font-bold py-3 rounded-xl text-center text-sm transition">
+                    Seguir comprando
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnAgregar = document.getElementById('btn-agregar-carrito');
+            const modal = document.getElementById('modal-carrito');
+            const modalImg = document.getElementById('modal-producto-img');
+            const modalNombre = document.getElementById('modal-producto-nombre');
+            const modalPrecio = document.getElementById('modal-producto-precio');
+            const form = document.getElementById('form-agregar-carrito');
+
+            if (!btnAgregar) return;
+
+            btnAgregar.addEventListener('click', function(e) {
+                e.preventDefault();
+                const originalText = this.innerHTML;
+                this.innerHTML = 'Agregando...';
+                this.disabled = true;
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function(res) {
+                    if (!res.ok) {
+                        return res.json().then(function(data) {
+                            throw new Error(data.error || 'Error al agregar');
+                        });
+                    }
+                    return res.json();
+                })
+                .then(function(data) {
+                    modalNombre.textContent = data.producto.nombre;
+                    modalImg.src = data.producto.imagen_url;
+                    modalImg.alt = data.producto.nombre;
+                    modalPrecio.textContent = '$' + Number(data.producto.precio).toLocaleString('es-CO');
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                    setTimeout(function() {
+                        modal.querySelector('div:first-child').classList.remove('scale-95');
+                        modal.querySelector('div:first-child').classList.add('scale-100');
+                    }, 10);
+                    btnAgregar.innerHTML = originalText;
+                    btnAgregar.disabled = false;
+                })
+                .catch(function(err) {
+                    alert(err.message);
+                    btnAgregar.innerHTML = originalText;
+                    btnAgregar.disabled = false;
+                });
+            });
+
+            function cerrarModal() {
+                var card = modal.querySelector('div:first-child');
+                card.classList.remove('scale-100');
+                card.classList.add('scale-95');
+                setTimeout(function() {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }, 200);
+            }
+
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) cerrarModal();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) cerrarModal();
+            });
+        });
+    </script>
 </x-app-layout>
