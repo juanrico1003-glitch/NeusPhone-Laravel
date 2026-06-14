@@ -1,61 +1,145 @@
 # NeusPhone Laravel
 
-Sigue estos pasos para clonar y configurar el proyecto para que funcione correctamente en tu entorno local ya debes tener instalado en tu entorno: Git, Composer, Node.js, PHP 8.4 y MySQL.
+Plataforma de comercio electrónico para venta de dispositivos electrónicos (celulares, laptops, tablets, componentes PC, accesorios) con sistema de servicio técnico, chatbot IA y pasarela de pagos Wompi.
 
-## 1. Clonar el repositorio
+## Requisitos
 
-Abre tu terminal donde quieras clonar el proyecto y ejecuta el siguiente comando para descargar:
+- PHP 8.4+
+- Composer
+- Node.js 20+
+- MySQL 8+
+- Git
 
+## Instalación
+
+```bash
+# 1. Clonar
 git clone https://github.com/juanrico1003-glitch/NeusPhone-Laravel.git
-
-Luego, entra en la carpeta del proyecto:
-
 cd NeusPhone-Laravel
 
-## 2. Instalar dependencias
-
-Instala las dependencias de PHP (Laravel) y las de Node (Frontend):
-
+# 2. Dependencias
 composer install
 npm install
 
-## 3. Configurar entorno
-
-Crea tu archivo de entorno copiando el de ejemplo:
-
+# 3. Entorno
 cp .env.example .env
+# Edita .env con tus credenciales de base de datos y servicios
 
-## 4. Generar la clave de la aplicación
-
-Genera la clave de seguridad de Laravel:
-
+# 4. Generar clave
 php artisan key:generate
 
-## 5. Base de datos y almacenamiento
-
-Ejecuta las migraciones y llena la base de datos con los datos iniciales, y luego crea el enlace de almacenamiento:
-
+# 5. Base de datos
 php artisan migrate:fresh --seed
 php artisan storage:link
 
-## 6. Compilar el Frontend
-
-Por último, construye los recursos del frontend:
-
+# 6. Frontend
 npm run build
 
-El proyecto ya debería estar configurado y listo para funcionar.
+# 7. Iniciar servidor
+php artisan serve
+```
 
----
+## Funcionalidades
 
-## Funcionalidades adicionales
+### Tienda
+- Catálogo de productos con filtros por categoría, marca, precio, tipo (nuevo/usado)
+- Vista detalle con selector de variantes (color, RAM, almacenamiento, procesador, GPU)
+- Productos recomendados y testimonios
+- Búsqueda por nombre, marca y descripción
+- Paginación (20 productos por página)
 
-- **Automatización con n8n:**
-    - Se integró n8n para automatizar el envío de correos de bienvenida cada vez que un nuevo usuario se registra.
-    - El envío de correos utiliza SMTP con una cuenta de Gmail diferente a la principal del sistema.
+### Carrito y Checkout
+- Carrito basado en sesión
+- Formulario de envío con departamentos/municipios de Colombia
+- Cupones de descuento (porcentaje o fijo)
+- Integración con Wompi (pagos en COP)
+- Modo simulación para desarrollo
 
-- **Chatbot inteligente:**
-    - El chatbot ahora utiliza una instancia local de IA (Ollama Llama 3.2:3b) conectada mediante n8n.
-    - El chatbot puede leer la base de datos y hacer recomendaciones personalizadas a los clientes.
-    - Ejemplo: Si el usuario pregunta por productos Samsung, el chatbot consulta el stock disponible, muestra el precio en COP, colores, nombre y si el producto es nuevo o usado.
-    - El chatbot también informa sobre redes sociales y métodos de contacto disponibles.
+### Pedidos
+- Estados: pendiente → pagado → enviado → entregado / cancelado
+- Restauración automática de stock al cancelar
+- Notificaciones por email al cambiar estado
+- Descarga de factura PDF
+- Historial de pedidos por cliente
+
+### Panel Administrativo
+- Dashboard con estadísticas: ventas, productos, pedidos, usuarios
+- CRUD de productos con imágenes y campos dinámicos por categoría
+- Gestión de pedidos (cambiar estado, ver detalle)
+- Gestión de solicitudes de servicio técnico
+- Administración de usuarios (roles, activar/desactivar)
+- Cupones de descuento (CRUD)
+- Moderación de testimonios/reseñas
+
+### Clientes
+- Dashboard personal con perfil, pedidos, servicios y reseñas
+- Actualización de perfil y contraseña
+- Solicitud de eliminación de cuenta (30 días de recuperación)
+
+### Automatización
+- `php artisan app:check-low-stock` — Alerta diaria de stock crítico a administradores
+- `php artisan app:purge-deleted-accounts` — Eliminación permanente de cuentas vencidas
+
+### Chatbot IA
+- Integración con Ollama (Llama 3.2:3b) vía n8n
+- Recomendaciones personalizadas de productos
+- Consultas de stock, precios y disponibilidad
+
+### Seguridad
+- Throttling de inicio de sesión (5 intentos máximos)
+- Validación de tipos de archivo en imágenes subidas
+- Soft delete de cuentas con período de gracia
+- Middleware de administrador
+- Protección CSRF en formularios
+
+## Variables de entorno importantes
+
+| Variable | Descripción |
+|----------|-------------|
+| `DB_*` | Conexión a base de datos MySQL |
+| `MAIL_*` | Configuración SMTP para correos |
+| `WOMPI_*` | Credenciales de Wompi (pagos) |
+| `N8N_*` | Webhooks de n8n (chatbot, bienvenida) |
+| `GOOGLE_*` | Credenciales OAuth de Google |
+
+## Acceso desde dispositivos móviles en red local
+
+Para ver la app desde tu teléfono en la misma red:
+
+**Terminal 1 - Servidor Laravel:**
+```bash
+php artisan serve --host=0.0.0.0 --port=8000
+```
+
+**Terminal 2 - Túnel LocalTunnel:**
+```bash
+npm install -g localtunnel  # Solo la primera vez
+lt --port 8000
+```
+
+Luego abre en el navegador del teléfono la URL que aparece:
+```
+https://[subdomain-aleatorio].loca.lt
+```
+
+### Notas
+- Los assets (CSS/JS) se sirven con rutas relativas `/build/...` y funcionan desde cualquier dominio
+- La sesión se comparte entre acceso local y túnel (misma base de datos)
+- Para desarrollo local sin túnel: `http://127.0.0.1:8000` o `http://localhost:8000`
+
+## Programación de tareas
+
+Configura el scheduler de Laravel en tu servidor:
+
+```
+* * * * * cd /ruta/proyecto && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Stack tecnológico
+
+- **Backend:** Laravel 12, MySQL
+- **Frontend:** Tailwind CSS 3, Alpine.js, GSAP, Vite
+- **Pagos:** Wompi (sandbox/producción)
+- **IA:** Ollama + n8n (chatbot)
+- **Autenticación:** Laravel Breeze + Socialite (Google)
+- **PDF:** barryvdh/laravel-dompdf

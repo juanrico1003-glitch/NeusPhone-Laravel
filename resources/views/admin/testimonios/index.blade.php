@@ -15,6 +15,12 @@
                     </div>
                 @endif
 
+                <div class="mb-4">
+                    <a href="{{ route('admin.exportar.testimonios') }}" class="inline-block bg-green-800 hover:bg-green-900 text-white px-4 py-2 rounded-lg text-sm transition">
+                        Exportar Excel
+                    </a>
+                </div>
+
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-200">
@@ -63,6 +69,10 @@
                         @endforelse
                     </tbody>
                 </table>
+
+                <div class="mt-4">
+                    {{ $testimonios->links() }}
+                </div>
             </div>
         </div>
     </div>

@@ -2,13 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderAdminMailable;
+use App\Models\Cupon;
 use App\Models\Pedido;
 use App\Models\PedidoDetalle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
+    public static function calcularCostoEnvio($departamento)
+    {
+        $departamento = strtolower(trim($departamento));
+        $gratis = ['valle del cauca', 'cauca', 'quindio', 'risaralda', 'caldas'];
+        $costoMedio = ['antioquia', 'cundinamarca', 'bogotá', 'bogota', 'tolima', 'huila', 'narino', 'putumayo'];
+        if (in_array($departamento, $gratis)) return 0;
+        if (in_array($departamento, $costoMedio)) return 15000;
+        return 25000;
+    }
+
     // Mostrar formulario de checkout
     public function index()
     {
@@ -25,7 +38,8 @@ class CheckoutController extends Controller
             $query->where('usuario_id', Auth::id());
         })->latest()->first();
 
-        return view('checkout.index', compact('carrito', 'usuario', 'ultimoEnvio'));
+        $costoEnvio = $ultimoEnvio ? self::calcularCostoEnvio($ultimoEnvio->departamento) : 0;
+        return view('checkout.index', compact('carrito', 'usuario', 'ultimoEnvio', 'costoEnvio'));
     }
 
     // Guardar el pedido y redireccionar a la página de pago
@@ -51,46 +65,88 @@ class CheckoutController extends Controller
             'detalles_envio' => 'nullable|string|max:255',
         ]);
 
-        $total = 0;
+        $descuento = 0;
+        $cuponId = session('cupon_id');
+        $cupon = null;
+        if ($cuponId) {
+            $cupon = Cupon::find($cuponId);
+        }
+
+        $subtotal = 0;
         foreach ($carrito as $item) {
-            $total += $item['precio'] * $item['cantidad'];
+            $subtotal += $item['precio'] * $item['cantidad'];
         }
 
-        // Crear el pedido en estado pendiente
-        $pedido = Pedido::create([
-            'usuario_id' => Auth::id(),
-            'total' => $total,
-            'estado' => 'pendiente',
-        ]);
+        if ($cupon && $cupon->esValido() && (!$cupon->minimo_compra || $subtotal >= $cupon->minimo_compra)) {
+            $descuento = $subtotal - $cupon->aplicarDescuento($subtotal);
+        }
 
-        // Crear el envío asociado al pedido
-        $pedido->envio()->create([
-            'nombre_contacto' => $request->nombre_contacto,
-            'correo_contacto' => $request->correo_contacto,
-            'cedula_contacto' => $request->cedula_contacto,
-            'telefono_contacto' => $request->telefono_contacto,
-            'departamento' => $request->departamento,
-            'municipio' => $request->municipio,
-            'direccion' => $request->direccion,
-            'tipo_lugar' => $request->tipo_lugar,
-            'nombre_lugar' => $request->nombre_lugar,
-            'detalles_envio' => $request->detalles_envio,
-        ]);
+        $costoEnvio = self::calcularCostoEnvio($request->departamento);
+        $total = ($subtotal - $descuento) + $costoEnvio;
 
-        // Guardar detalles del pedido (sin descontar stock aún, se descuenta cuando se confirme el pago)
-        foreach ($carrito as $id => $item) {
-            PedidoDetalle::create([
-                'pedido_id' => $pedido->id,
-                'producto_id' => $id,
-                'cantidad' => $item['cantidad'],
-                'precio' => $item['precio']
+        DB::beginTransaction();
+        try {
+            // Crear el pedido en estado pendiente
+            $pedido = Pedido::create([
+                'usuario_id' => Auth::id(),
+                'total' => $total,
+                'subtotal' => $subtotal,
+                'descuento' => $descuento,
+                'costo_envio' => $costoEnvio,
+                'cupon_id' => $cupon?->id,
+                'estado' => 'pendiente',
             ]);
+
+            // Crear el envío asociado al pedido
+            $pedido->envio()->create([
+                'nombre_contacto' => $request->nombre_contacto,
+                'correo_contacto' => $request->correo_contacto,
+                'cedula_contacto' => $request->cedula_contacto,
+                'telefono_contacto' => $request->telefono_contacto,
+                'departamento' => $request->departamento,
+                'municipio' => $request->municipio,
+                'direccion' => $request->direccion,
+                'tipo_lugar' => $request->tipo_lugar,
+                'nombre_lugar' => $request->nombre_lugar,
+                'detalles_envio' => $request->detalles_envio,
+            ]);
+
+            // Guardar detalles del pedido (sin descontar stock aún, se descuenta cuando se confirme el pago)
+            foreach ($carrito as $id => $item) {
+                PedidoDetalle::create([
+                    'pedido_id' => $pedido->id,
+                    'producto_id' => $id,
+                    'cantidad' => $item['cantidad'],
+                    'precio' => $item['precio']
+                ]);
+            }
+
+            if ($cupon) {
+                $cupon->increment('usos_actuales');
+            }
+
+            DB::commit();
+
+            try {
+                $admins = \App\Models\Usuario::whereHas('rol', fn($q) => $q->where('nombre', 'admin'))->get();
+                foreach ($admins as $admin) {
+                    \Illuminate\Support\Facades\Mail::to($admin->correo)->queue(new NewOrderAdminMailable($pedido));
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('Error notificando admin: ' . $e->getMessage());
+            }
+
+            // Vaciar el carrito de la sesión
+            session()->forget('carrito');
+            session()->forget('cupon_id');
+            session()->forget('cupon_codigo');
+            session()->forget('cupon_descuento');
+
+            return redirect()->route('checkout.pagar', $pedido->id);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al procesar el pedido: ' . $e->getMessage());
         }
-
-        // Vaciar el carrito de la sesión
-        session()->forget('carrito');
-
-        return redirect()->route('checkout.pagar', $pedido->id);
     }
 
     public function pagar(int $id)
@@ -137,5 +193,43 @@ class CheckoutController extends Controller
             'wompiPublicKey', 'wompiCheckoutUrl', 'wompiError',
             'wompiSimulated', 'signature'
         ));
+    }
+
+    public function aplicarCupon(Request $request)
+    {
+        $request->validate([
+            'codigo' => 'required|string|max:50',
+        ]);
+
+        $cupon = Cupon::where('codigo', $request->codigo)->first();
+
+        if (!$cupon || !$cupon->esValido()) {
+            return back()->with('error', 'El cupón no es válido o ha expirado.');
+        }
+
+        $carrito = session()->get('carrito', []);
+        $subtotal = 0;
+        foreach ($carrito as $item) {
+            $subtotal += $item['precio'] * $item['cantidad'];
+        }
+
+        if ($cupon->minimo_compra && $subtotal < $cupon->minimo_compra) {
+            return back()->with('error', 'El pedido mínimo para este cupón es $' . number_format($cupon->minimo_compra, 0, ',', '.'));
+        }
+
+        session(['cupon_id' => $cupon->id]);
+        session(['cupon_codigo' => $cupon->codigo]);
+        session(['cupon_descuento' => $subtotal - $cupon->aplicarDescuento($subtotal)]);
+
+        return back()->with('success', 'Cupón aplicado correctamente. Descuento: $' . number_format(session('cupon_descuento'), 0, ',', '.'));
+    }
+
+    public function removerCupon()
+    {
+        session()->forget('cupon_id');
+        session()->forget('cupon_codigo');
+        session()->forget('cupon_descuento');
+
+        return back()->with('success', 'Cupón removido.');
     }
 }

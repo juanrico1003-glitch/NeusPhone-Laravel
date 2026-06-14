@@ -54,6 +54,15 @@
                     <p class="mb-1"><strong>Indicaciones:</strong> {{ $pedido->envio->detalles_envio }}</p>
                 @endif
                 <p class="mb-1"><strong>Ciudad:</strong> {{ $pedido->envio->municipio }}, {{ $pedido->envio->departamento }}</p>
+                @if($pedido->envio->numero_guia)
+                    <p class="mb-1"><strong>Número de guía:</strong> {{ $pedido->envio->numero_guia }}</p>
+                @endif
+                <form method="POST" action="{{ route('admin.pedidos.guia', $pedido->id) }}" class="mt-3 flex gap-2">
+                    @csrf
+                    <input type="text" name="numero_guia" value="{{ $pedido->envio->numero_guia ?? '' }}" placeholder="Número de guía"
+                           class="flex-1 border border-gray-300 rounded px-3 py-1.5 text-sm">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm">Actualizar</button>
+                </form>
                 @if($pedido->wompi_transaction_id)
                     <p class="mt-2 text-xs text-gray-500"><strong>Wompi ID:</strong> {{ $pedido->wompi_transaction_id }} ({{ $pedido->wompi_payment_method }})</p>
                 @endif

@@ -104,6 +104,11 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
         @forelse($productosEstrella as $producto)
             <div class="card-anim glass rounded-2xl p-4 md:p-6 flex flex-col hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(37,99,235,0.15)] transition-all duration-300 relative group overflow-hidden h-full">
+                @if($producto->tiene_descuento)
+                <div class="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    -{{ $producto->descuento_formateado }}%
+                </div>
+                @endif
                 <div class="relative aspect-square bg-white rounded-xl overflow-hidden mb-4 shadow-sm">
                     <img src="{{ asset('productos/'.(!empty($producto->imagenes) ? $producto->imagenes[0] : 'default.png')) }}" alt="{{ $producto->nombre }}" class="w-full h-full object-contain p-2">
                 </div>
@@ -112,14 +117,19 @@
                         {{ $producto->tipo === 'nuevo' ? 'Nuevo' : 'Semi Nuevo' }}
                     </span>
                     <h3 class="font-bold text-base md:text-lg text-gray-800 line-clamp-2 leading-tight mb-2">{{ $producto->nombre }}</h3>
-                    <p class="text-xl md:text-2xl font-extrabold text-green-600 mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</p>
+                    @if($producto->tiene_descuento)
+                        <p class="text-sm text-gray-400 line-through">${{ number_format($producto->precio, 0, ',', '.') }}</p>
+                        <p class="text-xl md:text-2xl font-extrabold text-green-600 mb-4">${{ number_format($producto->precio_con_descuento, 0, ',', '.') }}</p>
+                    @else
+                        <p class="text-xl md:text-2xl font-extrabold text-green-600 mb-4">${{ number_format($producto->precio, 0, ',', '.') }}</p>
+                    @endif
                     <a href="{{ route('tienda.producto', $producto->id) }}" class="block w-full py-2 md:py-2.5 bg-[#004080] text-white text-center rounded-lg hover:bg-blue-800 transition font-medium shadow-md text-sm md:text-base">
                         Ver Detalles
                     </a>
                 </div>
             </div>
         @empty
-            <div class="col-span-full text-center text-gray-500 py-10 font-medium">Aún no hay ofertas ddisponibles en este momento.</div>
+            <div class="col-span-full text-center text-gray-500 py-10 font-medium">Aún no hay ofertas disponibles en este momento.</div>
         @endforelse
     </div>
 </div>
@@ -216,7 +226,7 @@
             </div>
         </div>
         <div class="w-full md:w-1/2 flex justify-center items-center relative z-10 py-6 md:py-0">
-            <img src="{{ asset('favicon.svg') }}" alt="Logo NeusPhone" class="w-40 sm:w-48 md:w-64 lg:w-80 h-auto drop-shadow-2xl transform hover:scale-105 hover:rotate-3 transition-all duration-500">
+            <img src="/favicon.svg" alt="Logo NeusPhone" class="w-40 sm:w-48 md:w-64 lg:w-80 h-auto drop-shadow-2xl transform hover:scale-105 hover:rotate-3 transition-all duration-500">
         </div>
     </div>
 </div>

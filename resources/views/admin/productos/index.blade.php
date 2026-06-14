@@ -7,10 +7,19 @@
 
     <div class="p-4 md:p-6">
 
-        <a href="{{ route('admin.productos.create') }}"
-           class="inline-block px-4 md:px-6 py-2 md:py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
-            ➕ Nuevo producto
-        </a>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('admin.productos.create') }}"
+               class="inline-block px-4 md:px-6 py-2 md:py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition">
+                ➕ Nuevo producto
+            </a>
+            <a href="{{ route('admin.exportar.productos') }}"
+               class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 md:py-3 rounded-lg text-sm font-medium transition">
+                Exportar CSV
+            </a>
+            <a href="{{ route('admin.exportar.inventario') }}" class="inline-block bg-green-700 hover:bg-green-800 text-white px-4 py-2 md:py-3 rounded-lg text-sm font-medium transition">
+                Exportar Excel
+            </a>
+        </div>
 
         <!-- Vista de tabla -->
         <div class="mt-6 hidden md:block overflow-x-auto">
@@ -52,6 +61,9 @@
 
                             <td class="p-3 font-bold text-green-600">
                                 ${{ number_format($producto->precio, 0, ',', '.') }}
+                                @if($producto->tiene_descuento)
+                                    <br><span class="text-xs bg-red-100 text-red-700 px-1 py-0.5 rounded font-bold">-{{ $producto->descuento_formateado }}%</span>
+                                @endif
                             </td>
 
                             <td class="p-3 text-center">
@@ -84,6 +96,11 @@
                                     Editar
                                 </a>
 
+                                <a href="{{ route('admin.productos.variantes', $producto->id) }}"
+                                   class="w-full text-center px-2 py-1 text-xs bg-indigo-500 hover:bg-indigo-600 text-white rounded transition">
+                                    Variantes
+                                </a>
+
                                 <form action="{{ route('admin.productos.destroy', $producto->id) }}"
                                       method="POST" class="w-full" onsubmit="return confirm('¿Eliminar este producto?')">
                                     @csrf
@@ -107,6 +124,10 @@
                 </tbody>
 
             </table>
+
+            <div class="mt-4 hidden md:block">
+                {{ $productos->links() }}
+            </div>
         </div>
 
         <!-- Vista tarjetas -->
@@ -173,6 +194,10 @@
                     No hay productos registrados
                 </div>
             @endforelse
+        </div>
+
+        <div class="mt-4 md:hidden">
+            {{ $productos->links() }}
         </div>
 
     </div>

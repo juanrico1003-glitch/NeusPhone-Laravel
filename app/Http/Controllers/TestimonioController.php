@@ -35,13 +35,21 @@ class TestimonioController extends Controller
         $request->validate([
             'comentario' => 'required|string|max:500',
             'calificacion' => 'required|integer|min:1|max:5',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
+
+        $nombreImagen = null;
+        if ($request->hasFile('imagen')) {
+            $nombreImagen = time() . '_' . $request->file('imagen')->getClientOriginalName();
+            $request->file('imagen')->move(public_path('testimonios'), $nombreImagen);
+        }
 
         Testimonio::create([
             'usuario_id' => Auth::id(),
             'producto_id' => $id,
             'comentario' => $request->comentario,
             'calificacion' => $request->calificacion,
+            'imagen' => $nombreImagen,
             'estado' => 1
         ]);
 

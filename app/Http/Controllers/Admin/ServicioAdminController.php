@@ -19,7 +19,7 @@ class ServicioAdminController extends Controller
             $query->where('estado', $request->estado);
         }
 
-        $solicitudes = $query->get();
+        $solicitudes = $query->paginate(20)->withQueryString();
 
         return view('admin.servicios.index', compact('solicitudes'));
     }

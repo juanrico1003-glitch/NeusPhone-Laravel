@@ -7,6 +7,15 @@
 
     <div class="p-6">
 
+        <div class="flex gap-2 mb-4">
+            <a href="{{ route('admin.exportar.pedidos') }}" class="inline-block bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                Exportar CSV
+            </a>
+            <a href="{{ route('admin.exportar.pedidos.excel') }}" class="inline-block bg-green-800 hover:bg-green-900 text-white px-4 py-2 rounded-lg text-sm transition">
+                Exportar Excel
+            </a>
+        </div>
+
         <table class="w-full border">
             <thead class="bg-gray-200">
                 <tr>
@@ -51,6 +60,10 @@
             </tbody>
 
         </table>
+
+        <div class="mt-4">
+            {{ $pedidos->links() }}
+        </div>
 
     </div>
 </x-app-layout>

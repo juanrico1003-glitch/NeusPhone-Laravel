@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderStatusMailable;
 use App\Models\Pedido;
 use App\Models\PedidoDetalle;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class WompiController extends Controller
 {
@@ -65,6 +67,7 @@ class WompiController extends Controller
 
                     if ($status === 'APPROVED' && !$alreadyPaid) {
                         $this->descontarStock($pedido);
+                        $this->enviarNotificacionPedido($pedido);
                     }
                 }
             } else {
@@ -147,6 +150,7 @@ class WompiController extends Controller
 
                     if ($status === 'APPROVED' && !$alreadyPaid) {
                         $this->descontarStock($pedido);
+                        $this->enviarNotificacionPedido($pedido);
                     }
                 }
 
@@ -180,6 +184,7 @@ class WompiController extends Controller
         $pedido->save();
 
         $this->descontarStock($pedido);
+        $this->enviarNotificacionPedido($pedido);
 
         $transactionData = [
             'id' => $transactionId,
@@ -203,6 +208,15 @@ class WompiController extends Controller
                 $producto->stock = max(0, $producto->stock - $detalle->cantidad);
                 $producto->save();
             }
+        }
+    }
+
+    private function enviarNotificacionPedido(Pedido $pedido): void
+    {
+        try {
+            Mail::to($pedido->usuario->correo)->send(new OrderStatusMailable($pedido));
+        } catch (\Exception $e) {
+            Log::error("Error enviando email de pago pedido #{$pedido->id}: " . $e->getMessage());
         }
     }
 

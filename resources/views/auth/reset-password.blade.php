@@ -1,39 +1,52 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('password.store') }}">
-        @csrf
+@extends('layouts.tienda')
 
-        <!-- Password Reset Token -->
-        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+@section('contenido')
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $request->email)" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+<div class="flex justify-center items-center min-h-[70vh] px-4">
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+        <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">
+            Restablecer contraseña
+        </h2>
 
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                                type="password"
-                                name="password_confirmation" required autocomplete="new-password" />
+        <form method="POST" action="{{ route('password.store') }}">
+            @csrf
 
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
+            <input type="hidden" name="token" value="{{ $request->route('token') }}">
 
-        <div class="flex items-center justify-end mt-4">
-            <x-primary-button>
-                {{ __('Reset Password') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium text-gray-700">Correo electrónico</label>
+                <input type="email" name="correo" value="{{ old('correo', $request->correo) }}" readonly
+                       class="w-full border rounded-lg px-3 py-2 bg-gray-50 text-gray-500 focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required autofocus>
+                @error('correo')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium text-gray-700">Nueva contraseña</label>
+                <input type="password" name="password"
+                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required autocomplete="new-password">
+                @error('password')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label class="block mb-1 text-sm font-medium text-gray-700">Confirmar contraseña</label>
+                <input type="password" name="password_confirmation"
+                       class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400" required autocomplete="new-password">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition">
+                Restablecer contraseña
+            </button>
+        </form>
+
+    </div>
+
+</div>
+
+@endsection

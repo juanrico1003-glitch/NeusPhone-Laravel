@@ -11,13 +11,26 @@
 
 <!-- Filtros -->
 <form method="GET" action="{{ route('tienda') }}" class="mb-8 bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+        <!-- Categoría -->
+        <div class="flex flex-col">
+            <label class="text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+            <select name="categoria"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
+                <option value="">Todas</option>
+                @foreach($categorias as $cat)
+                    <option value="{{ $cat->id }}" {{ request('categoria') == $cat->id ? 'selected' : '' }}>
+                        {{ $cat->nombre }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
         <!-- Marca -->
         <div class="flex flex-col">
             <label class="text-sm font-semibold text-gray-700 mb-2">Marca</label>
             <select name="marca"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Todas las marcas</option>
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
+                <option value="">Todas</option>
                 @foreach($marcas as $marca)
                     <option value="{{ $marca }}"
                         {{ request('marca') == $marca ? 'selected' : '' }}>
@@ -26,41 +39,53 @@
                 @endforeach
             </select>
         </div>
-
         <!-- Condicion -->
         <div class="flex flex-col">
             <label class="text-sm font-semibold text-gray-700 mb-2">Condición</label>
             <select name="tipo"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
                 <option value="">Todas</option>
-                <option value="nuevo" {{ request('tipo') == 'nuevo' ? 'selected' : '' }}>
-                    Nuevo
-                </option>
-                <option value="usado" {{ request('tipo') == 'usado' ? 'selected' : '' }}>
-                    Usado
-                </option>
+                <option value="nuevo" {{ request('tipo') == 'nuevo' ? 'selected' : '' }}>Nuevo</option>
+                <option value="usado" {{ request('tipo') == 'usado' ? 'selected' : '' }}>Usado</option>
             </select>
         </div>
-
+        <!-- Ofertas -->
+        <div class="flex flex-col">
+            <label class="text-sm font-semibold text-gray-700 mb-2">Ofertas</label>
+            <select name="oferta"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
+                <option value="">Todos</option>
+                <option value="1" {{ request('oferta') == '1' ? 'selected' : '' }}>Solo ofertas</option>
+            </select>
+        </div>
+        <!-- Precio min -->
+        <div class="flex flex-col">
+            <label class="text-sm font-semibold text-gray-700 mb-2">Precio mínimo</label>
+            <input type="number" name="precio_min" value="{{ request('precio_min') }}"
+                   placeholder="$0"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+        </div>
+        <!-- Precio max -->
+        <div class="flex flex-col">
+            <label class="text-sm font-semibold text-gray-700 mb-2">Precio máximo</label>
+            <input type="number" name="precio_max" value="{{ request('precio_max') }}"
+                   placeholder="$999999"
+                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+        </div>
         <!-- Orden -->
         <div class="flex flex-col">
             <label class="text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
             <select name="orden"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 md:px-4 md:py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Seleccionar</option>
-                <option value="asc" {{ request('orden') == 'asc' ? 'selected' : '' }}>
-                    Menor precio
-                </option>
-                <option value="desc" {{ request('orden') == 'desc' ? 'selected' : '' }}>
-                    Mayor precio
-                </option>
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
+                <option value="">Relevancia</option>
+                <option value="asc" {{ request('orden') == 'asc' ? 'selected' : '' }}>Menor precio</option>
+                <option value="desc" {{ request('orden') == 'desc' ? 'selected' : '' }}>Mayor precio</option>
             </select>
         </div>
-
         <!-- Boton Filtrar -->
         <div class="flex items-end">
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 md:py-2.5 rounded-lg transition transform hover:scale-105 active:scale-95">
-                🔍 Filtrar
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition transform hover:scale-105 active:scale-95 text-sm">
+                Filtrar
             </button>
         </div>
     </div>
@@ -79,7 +104,13 @@
                          alt="{{ $producto->nombre }}"
                          class="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300">
                 </a>
-                
+
+                @if($producto->tiene_descuento)
+                <div class="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                    -{{ $producto->descuento_formateado }}%
+                </div>
+                @endif
+
                 <!-- Condicion -->
                 <div class="absolute top-3 right-3">
                     <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-600 text-white">
@@ -98,9 +129,14 @@
                     {{ $producto->categoria->nombre ?? 'Sin categoría' }}
                 </p>
 
+                @if($producto->tiene_descuento)
+                <p class="text-sm text-gray-400 line-through">${{ number_format($producto->precio, 0, ',', '.') }}</p>
+                <p class="text-lg md:text-xl font-bold text-green-600 my-2">${{ number_format($producto->precio_con_descuento, 0, ',', '.') }}</p>
+                @else
                 <p class="text-lg md:text-xl font-bold text-green-600 my-2">
                     ${{ number_format($producto->precio, 0, ',', '.') }}
                 </p>
+                @endif
 
                 <!-- Indicator -->
                 <div class="mb-3">
@@ -132,6 +168,10 @@
 
 </div>
 
+<!-- Paginacion -->
+<div class="mt-8">
+    {{ $productos->links() }}
+</div>
 
 </div>
 

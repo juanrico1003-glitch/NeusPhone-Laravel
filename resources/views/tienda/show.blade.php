@@ -29,11 +29,13 @@
                 <!-- Carrusel imagenes Alpine.js -->
                 <div x-data="{ 
                     imagenes: {{ json_encode($producto->imagenes ?? ['default.png']) }},
-                    imagenActiva: 0 
+                    imagenActiva: 0,
+                    lightboxAbierto: false,
+                    lightboxIndex: 0
                  }" class="flex flex-col gap-3 md:gap-4">
                  
                 <!-- Imagen Principal -->
-                <div class="w-full aspect-square bg-white rounded-xl shadow-lg border border-gray-100 flex items-center justify-center overflow-hidden relative group">
+                <div @click="lightboxAbierto = true; lightboxIndex = imagenActiva" class="w-full aspect-square bg-white rounded-xl shadow-lg border border-gray-100 flex items-center justify-center overflow-hidden relative group cursor-pointer">
                     <template x-for="(img, index) in imagenes" :key="index">
                         <img x-show="imagenActiva === index" 
                              x-transition.opacity.duration.300ms
@@ -41,6 +43,11 @@
                              :alt="'Producto ' + (index + 1)"
                              class="absolute inset-0 w-full h-full object-contain p-4">
                     </template>
+                    
+                    <!-- Icono lupa -->
+                    <div class="absolute top-3 left-3 bg-black/40 hover:bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                    </div>
                     
                     <!-- Controles  -->
                     <button x-show="imagenes.length > 1" 
@@ -71,6 +78,23 @@
                         </button>
                     </template>
                 </div>
+
+                <!-- Lightbox -->
+                <template x-teleport="body">
+                    <div x-show="lightboxAbierto" 
+                         @click.away="lightboxAbierto = false"
+                         @keydown.escape="lightboxAbierto = false"
+                         class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+                         x-transition.opacity>
+                        <button @click="lightboxAbierto = false" class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 z-10">&times;</button>
+                        <button @click="lightboxIndex = lightboxIndex === 0 ? imagenes.length - 1 : lightboxIndex - 1" class="absolute left-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:text-gray-300 z-10">&lsaquo;</button>
+                        <img :src="'{{ asset('productos/') }}/' + imagenes[lightboxIndex]" class="max-w-full max-h-full object-contain">
+                        <button @click="lightboxIndex = lightboxIndex === imagenes.length - 1 ? 0 : lightboxIndex + 1" class="absolute right-4 top-1/2 -translate-y-1/2 text-white text-4xl hover:text-gray-300 z-10">&rsaquo;</button>
+                        <div class="absolute bottom-4 text-white text-sm bg-black/50 px-3 py-1 rounded-full">
+                            <span x-text="lightboxIndex + 1"></span> / <span x-text="imagenes.length"></span>
+                        </div>
+                    </div>
+                </template>
             </div>
 
             <!-- Caracteristicas -->
@@ -118,9 +142,19 @@
                 <!-- Precio -->
                 <div class="mb-6 md:mb-8">
                     <p class="text-sm text-gray-600 mb-1">Precio</p>
+                    @if($producto->tiene_descuento)
+                    <div class="flex items-center gap-3 mb-1">
+                        <span class="bg-red-600 text-white text-sm font-bold px-3 py-1 rounded-full">-{{ $producto->descuento_formateado }}%</span>
+                    </div>
+                    <p class="text-xl md:text-2xl text-gray-400 line-through">${{ number_format($producto->precio, 0, ',', '.') }}</p>
+                    <p class="text-3xl md:text-4xl lg:text-5xl font-bold text-green-600">
+                        ${{ number_format($producto->precio_con_descuento, 0, ',', '.') }}
+                    </p>
+                    @else
                     <p class="text-3xl md:text-4xl lg:text-5xl font-bold text-green-600">
                         ${{ number_format($producto->precio, 0, ',', '.') }}
                     </p>
+                    @endif
                 </div>
 
                 <!-- Stock -->
@@ -209,6 +243,19 @@
                         @csrf
                     </form>
 
+                    @if($producto->stock <= 0)
+                    <form action="{{ route('producto.suscribir.stock', $producto->id) }}" method="POST" class="w-full">
+                        @csrf
+                        @if($yaSuscrito)
+                            <p class="text-sm text-green-600 font-semibold text-center py-2">✓ Ya te avisaremos cuando esté disponible</p>
+                        @else
+                            <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-3 rounded-lg transition text-sm">
+                                🔔 Avísame cuando llegue
+                            </button>
+                        @endif
+                    </form>
+                    @endif
+
                     @php
                         $mensajeWs = "Hola, me interesa el producto *" . $producto->nombre . "*";
                         if($producto->color) $mensajeWs .= " color " . $producto->color;
@@ -240,6 +287,37 @@
 
         </div>
 
+        @if($recomendados && $recomendados->count() > 0)
+        <div class="mt-12 pt-8 border-t border-gray-200 w-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">También te puede interesar</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+                @foreach($recomendados as $rec)
+                <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
+                    <div class="relative overflow-hidden bg-gray-100 aspect-square">
+                        <a href="{{ route('tienda.producto', $rec->id) }}" class="block h-full">
+                            <img src="{{ asset('productos/'.(!empty($rec->imagenes) ? $rec->imagenes[0] : 'default.png')) }}"
+                                 alt="{{ $rec->nombre }}"
+                                 class="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-300">
+                        </a>
+                    </div>
+                    <div class="flex-1 p-3 flex flex-col">
+                        <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 mb-1 group-hover:text-blue-600 transition">
+                            {{ $rec->nombre }}
+                        </h3>
+                        <p class="text-lg font-bold text-green-600 mt-auto">
+                            ${{ number_format($rec->precio, 0, ',', '.') }}
+                        </p>
+                        <a href="{{ route('tienda.producto', $rec->id) }}"
+                           class="mt-2 block text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg text-sm transition">
+                            Ver producto
+                        </a>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Sección de Comentarios (Ancho Completo) -->
         <div class="mt-12 pt-8 border-t border-gray-200 w-full">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Opiniones del Producto</h2>
@@ -248,7 +326,7 @@
                 <!-- Formulario para agregar reseña -->
                 <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4">Deja tu opinión</h3>
-                    <form action="{{ route('tienda.producto.resena', $producto->id) }}" method="POST">
+                    <form action="{{ route('tienda.producto.resena', $producto->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Calificación</label>
@@ -266,6 +344,11 @@
                             <textarea name="comentario" id="comentario" rows="3" required
                                 class="w-full border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                 placeholder="¿Qué te pareció este producto?"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Foto (opcional)</label>
+                            <input type="file" name="imagen" accept="image/*"
+                                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
                         </div>
                         <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition transform hover:scale-105 active:scale-95">
                             Publicar opinión
@@ -302,6 +385,11 @@
                                     </div>
                                 </div>
                                 <p class="text-gray-600 text-sm italic">"{{ $testimonio->comentario }}"</p>
+                                @if($testimonio->imagen)
+                                <div class="mt-3">
+                                    <img src="{{ asset('testimonios/'.$testimonio->imagen) }}" alt="Foto de la reseña" class="w-full max-h-40 object-contain rounded-lg border border-gray-100">
+                                </div>
+                                @endif
                             </div>
                             <p class="text-xs text-gray-400 mt-4 pt-3 border-t border-gray-100">{{ $testimonio->created_at->diffForHumans() }}</p>
                         </div>

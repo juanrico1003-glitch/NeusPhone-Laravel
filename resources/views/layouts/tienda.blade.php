@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link class="min-h-0" rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
-    <title>NeusPhone</title>
+    <meta name="description" content="NeusPhone - Tienda de dispositivos electrónicos, celulares, laptops, tablets, componentes PC y servicio técnico en Colombia.">
+    <meta name="keywords" content="celulares, laptops, tablets, computadores, tecnología, colombia, neusphone">
+    <meta name="author" content="NeusPhone">
+    <meta property="og:title" content="{{ $metaTitle ?? 'NeusPhone' }}">
+    <meta property="og:description" content="NeusPhone - Tienda de dispositivos electrónicos y servicio técnico en Colombia.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <link class="min-h-0" rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>{{ $metaTitle ?? 'NeusPhone' }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="relative bg-blue-50 overflow-x-hidden font-sans">
@@ -64,7 +71,7 @@
                                 <a href="{{ route('tienda') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">
                                     Tienda
                                 </a>
-                                <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">
+                                <a href="{{ route('dashboard.main') }}#ofertasEstrella" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">
                                     Ofertas
                                 </a>
                                 <a href="{{ route('servicios.create') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">
@@ -137,7 +144,7 @@
                             </button>
                             <!-- Menu desplegable -->
                             <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-                                <a href="#" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">
+                                <a href="{{ route('dashboard.main') }}#ofertasEstrella" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">
                                     Ofertas
                                 </a>
                                 <a href="{{ route('dashboard.main') }}#quienes-somos" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">
@@ -272,9 +279,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="https://wa.me/573014091025" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                    <a href="https://wa.me/573004060632" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
                         <x-icons.whatsapp class="w-5 h-5" />
-                        <span>+57 301 409 1025</span>
+                        <span>+57 300 406 0632</span>
                     </a>
                 </li>
             </ul>

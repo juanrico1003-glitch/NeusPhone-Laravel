@@ -33,6 +33,10 @@
                                class="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm">
                                 Ver detalle
                             </a>
+                            <a href="{{ route('pedidos.factura', $pedido->id) }}" target="_blank"
+                               class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded text-sm">
+                                Factura PDF
+                            </a>
                             @if(strtolower($pedido->estado) == 'entregado')
                             <a href="{{ route('testimonios.create') }}"
                                class="inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded text-sm shadow-md font-bold">

@@ -25,7 +25,13 @@
                 <!-- Informacion -->
                 <div class="flex-1 min-w-0">
                     <h3 class="font-bold text-base md:text-lg text-gray-800 truncate">{{ $item['nombre'] }}</h3>
-                    <p class="text-sm text-gray-600 mt-1">Cantidad: <span class="font-semibold">{{ $item['cantidad'] }}</span></p>
+                    <form method="POST" action="{{ route('carrito.actualizar', $id) }}" class="flex items-center gap-2 mt-1">
+                        @csrf
+                        <label class="text-sm text-gray-600">Cant:</label>
+                        <input type="number" name="cantidad" value="{{ $item['cantidad'] }}" min="1" max="{{ $item['stock'] ?? 99 }}"
+                               class="w-16 border border-gray-300 rounded px-2 py-1 text-sm text-center focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded transition">Actualizar</button>
+                    </form>
                     <p class="text-lg md:text-xl font-bold text-green-600 mt-2">
                         ${{ number_format($item['precio'], 0, ',', '.') }}
                     </p>

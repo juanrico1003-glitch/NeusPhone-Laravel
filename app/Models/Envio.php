@@ -19,7 +19,8 @@ class Envio extends Model
         'direccion',
         'tipo_lugar',
         'nombre_lugar',
-        'detalles_envio'
+        'detalles_envio',
+        'numero_guia'
     ];
 
     public function pedido()

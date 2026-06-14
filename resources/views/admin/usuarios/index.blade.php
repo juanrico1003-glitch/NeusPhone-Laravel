@@ -4,6 +4,7 @@
             <h2 class="font-semibold text-xl">Usuarios</h2>
             <div class="flex gap-2 text-sm">
                 <a href="{{ route('admin.usuarios.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">+ Nuevo usuario</a>
+                <a href="{{ route('admin.exportar.usuarios') }}" class="bg-green-800 hover:bg-green-900 text-white px-4 py-2 rounded-lg transition">Exportar Excel</a>
                 <a href="{{ route('admin.dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition">← Volver</a>
             </div>
         </div>
@@ -80,13 +81,20 @@
                             </td>
                             <td class="p-3 text-xs text-gray-400">{{ $u->created_at?->format('d/m/Y') ?? '-' }}</td>
                             <td class="p-3">
-                                <div class="flex gap-2">
-                                    <a href="{{ route('admin.usuarios.edit', $u) }}" class="text-blue-600 hover:text-blue-800 text-xs font-medium">Editar</a>
+                                <div class="flex items-center gap-2">
+                                    <a href="{{ route('admin.usuarios.edit', $u) }}" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">Editar</a>
                                     @if($u->id !== auth()->id())
-                                    <form action="{{ route('admin.usuarios.destroy', $u) }}" method="POST" onsubmit="return confirm('¿Desactivar este usuario?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">Desactivar</button>
-                                    </form>
+                                        @if($u->estado)
+                                        <form action="{{ route('admin.usuarios.destroy', $u) }}" method="POST" onsubmit="return confirm('¿Desactivar este usuario?')" class="inline">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" class="inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">Desactivar</button>
+                                        </form>
+                                        @else
+                                        <form action="{{ route('admin.usuarios.activar', $u) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition">Activar</button>
+                                        </form>
+                                        @endif
                                     @endif
                                 </div>
                             </td>

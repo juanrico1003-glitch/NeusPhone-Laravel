@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use App\Models\User;
+use App\Models\Usuario;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ServicioTest extends TestCase
@@ -12,13 +12,8 @@ class ServicioTest extends TestCase
 
     public function test_usuario_puede_crear_servicio()
     {
-        // Ejecutar migraciones
-        $this->artisan('migrate');
+        $user = Usuario::factory()->create();
 
-        // Crear usuario
-        $user = User::factory()->create();
-
-        // Simular petición
         $response = $this->actingAs($user)->post('/servicios', [
             'descripcion' => 'Pantalla dañada',
             'tipo' => 'Reparación'

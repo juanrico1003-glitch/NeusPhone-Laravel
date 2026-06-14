@@ -167,9 +167,9 @@
                     </h3>
                     
                     <div class="divide-y divide-gray-100 max-h-80 overflow-y-auto pr-1">
-                        @php $total = 0; @endphp
+                        @php $subtotal = 0; @endphp
                         @foreach($carrito as $id => $item)
-                            @php $total += $item['precio'] * $item['cantidad']; @endphp
+                            @php $subtotal += $item['precio'] * $item['cantidad']; @endphp
                             <div class="py-3 flex items-center justify-between gap-4">
                                 <div class="flex items-center gap-3">
                                     <div class="w-12 h-12 bg-gray-50 rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 flex items-center justify-center">
@@ -189,17 +189,63 @@
                         @endforeach
                     </div>
 
-                    <div class="border-t border-gray-100 pt-4 mt-4 flex justify-between items-center">
-                        <span class="text-gray-600 font-medium text-base">Total a pagar:</span>
-                        <span class="text-xl md:text-2xl font-bold text-green-600">
-                            ${{ number_format($total, 0, ',', '.') }}
-                        </span>
+                    <div class="border-t border-gray-100 pt-4 mt-4 space-y-2">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-gray-600">Subtotal:</span>
+                            <span class="font-medium">${{ number_format($subtotal, 0, ',', '.') }}</span>
+                        </div>
+                        @if(session('cupon_descuento'))
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-green-600">Cupón ({{ session('cupon_codigo') }}):</span>
+                            <span class="font-medium text-green-600">-${{ number_format(session('cupon_descuento'), 0, ',', '.') }}</span>
+                        </div>
+                        @endif
+                        <div class="flex justify-between items-center text-sm" id="envio-row">
+                            <span class="text-gray-600">Envío:</span>
+                            <span id="envio-monto" class="font-medium">
+                                @if($costoEnvio > 0)
+                                    ${{ number_format($costoEnvio, 0, ',', '.') }}
+                                @else
+                                    <span class="text-green-600 font-semibold">Gratis</span>
+                                @endif
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-100">
+                            <span class="text-gray-800 font-bold text-base">Total a pagar:</span>
+                            <span id="total-pagar" class="text-xl md:text-2xl font-bold text-green-600">
+                                ${{ number_format(max(0, ($subtotal - (session('cupon_descuento') ?? 0) + $costoEnvio)), 0, ',', '.') }}
+                            </span>
+                        </div>
                     </div>
 
                     <a href="{{ route('carrito.index') }}" 
                        class="block w-full text-center mt-6 text-sm text-blue-600 hover:text-blue-800 font-semibold transition">
                         ← Editar Carrito
                     </a>
+                </div>
+
+                {{-- Cupón de descuento --}}
+                <div class="bg-white shadow-md rounded-2xl p-6 border border-blue-100">
+                    <h3 class="text-sm font-bold text-gray-800 mb-3">¿Tienes un cupón?</h3>
+                    @if(session('cupon_codigo'))
+                        <div class="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div>
+                                <span class="text-sm font-semibold text-green-700">{{ session('cupon_codigo') }}</span>
+                                <span class="text-xs text-green-600 ml-2">Descuento aplicado</span>
+                            </div>
+                            <form method="POST" action="{{ route('checkout.cupon.remover') }}">
+                                @csrf
+                                <button type="submit" class="text-xs text-red-600 hover:text-red-800 font-medium">Remover</button>
+                            </form>
+                        </div>
+                    @else
+                        <form method="POST" action="{{ route('checkout.cupon') }}" class="flex gap-2">
+                            @csrf
+                            <input type="text" name="codigo" placeholder="Ingresa el código"
+                                   class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition">
+                            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">Aplicar</button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>
@@ -415,6 +461,25 @@
                     populateDeptoOptions(fallbackData);
                 });
 
+            function calcularEnvio(departamento) {
+                const gratis = ['valle del cauca', 'cauca', 'quindio', 'risaralda', 'caldas'];
+                const costoMedio = ['antioquia', 'cundinamarca', 'bogotá', 'bogota', 'tolima', 'huila', 'narino', 'putumayo'];
+                const depto = departamento.toLowerCase().trim();
+                if (gratis.includes(depto)) return 0;
+                if (costoMedio.includes(depto)) return 15000;
+                return 25000;
+            }
+
+            function actualizarTotalEnvio() {
+                const depto = deptoSelect.value;
+                const subtotal = {{ $subtotal }};
+                const descuento = {{ session('cupon_descuento', 0) }};
+                const envio = depto ? calcularEnvio(depto) : 0;
+                const total = Math.max(0, subtotal - descuento + envio);
+                document.getElementById('envio-monto').textContent = envio > 0 ? '$' + envio.toLocaleString('es-CO') : 'Gratis';
+                document.getElementById('total-pagar').textContent = '$' + total.toLocaleString('es-CO');
+            }
+
             // Escuchar cambios de Departamento
             deptoSelect.addEventListener('change', function() {
                 const selectedDepto = this.value;
@@ -442,6 +507,7 @@
                         muniSelect.disabled = false;
                     }
                 }
+                actualizarTotalEnvio();
             });
         });
     </script>

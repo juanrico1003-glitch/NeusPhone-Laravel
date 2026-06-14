@@ -4,11 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ config('app.name', 'NeusPhone') }}</title>
+    <meta name="description" content="NeusPhone - Tienda de dispositivos electrónicos, celulares, laptops, tablets, componentes PC y servicio técnico en Colombia.">
+    <meta name="keywords" content="celulares, laptops, tablets, computadores, tecnología, colombia, neusphone">
+    <meta name="author" content="NeusPhone">
+    <meta property="og:title" content="{{ $metaTitle ?? config('app.name', 'NeusPhone') }}">
+    <meta property="og:description" content="NeusPhone - Tienda de dispositivos electrónicos y servicio técnico en Colombia.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <title>{{ $metaTitle ?? config('app.name', 'NeusPhone') }}</title>
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="font-sans relative bg-blue-50 overflow-x-hidden">
@@ -32,7 +39,7 @@
                 <!-- Logo -->
                 <a href="{{ route('dashboard.main') }}"
                    class="flex items-center gap-2 text-2xl md:text-3xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
-                    <img src="{{ asset('logo.png') }}" alt="Logo" class="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
+                    <img src="/logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
                     NeusPhone
                 </a>
                 <!-- Usuario -->
@@ -83,9 +90,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="https://wa.me/573014091025" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                    <a href="https://wa.me/573004060632" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
                         <x-icons.whatsapp class="w-5 h-5" />
-                        <span>+57 301 409 1025</span>
+                        <span>+57 300 406 0632</span>
                     </a>
                 </li>
             </ul>

@@ -35,7 +35,7 @@
                 <label class="block font-medium">Marca</label>
                 <select name="marca" class="w-full border rounded p-2" required>
                     <option value="">Seleccione una marca</option>
-                    <template x-for="marca in marcasFiltradas" :key="marca">
+                    <template x-for="marca in marcasFiltradas" :key="`marca-${selectedCategory}-${marca}`">
                         <option x-text="marca" :value="marca"></option>
                     </template>
                 </select>
@@ -73,7 +73,7 @@
                 <label class="block font-medium" x-text="etiquetaRam"></label>
                 <select name="ram" class="w-full border rounded p-2">
                     <option value="">Seleccione</option>
-                    <template x-for="ram in ramsFiltradas" :key="ram">
+                    <template x-for="ram in ramsFiltradas" :key="`ram-${selectedCategory}-${ram}`">
                         <option x-text="ram" :value="ram"></option>
                     </template>
                 </select>
@@ -84,7 +84,7 @@
                 <label class="block font-medium" x-text="etiquetaAlmacenamiento"></label>
                 <select name="almacenamiento" class="w-full border rounded p-2">
                     <option value="">Seleccione</option>
-                    <template x-for="alm in almacenamientosFiltrados" :key="alm">
+                    <template x-for="alm in almacenamientosFiltrados" :key="`almacenamiento-${selectedCategory}-${alm}`">
                         <option x-text="alm" :value="alm"></option>
                     </template>
                 </select>
@@ -93,8 +93,25 @@
             <!-- Precio -->
             <div class="mt-4">
                 <label class="block font-medium">Precio</label>
-                <input type="number" step="0.01" name="precio" class="w-full border rounded p-2" required
-                       placeholder="0.00">
+                <input type="number" step="0.01" name="precio" id="precio-input" class="w-full border rounded p-2" required
+                       placeholder="0.00" @input="calcularPrecioFinal">
+            </div>
+
+            <!-- Descuento -->
+            <div class="mt-4">
+                <label class="block font-medium">Descuento (%)</label>
+                <div class="flex gap-4 items-start">
+                    <div class="flex-1">
+                        <input type="number" step="0.01" min="0" max="100" name="descuento"
+                               value="0" id="descuento-input"
+                               class="w-full border rounded p-2" @input="calcularPrecioFinal">
+                        <small class="text-gray-500">Porcentaje de descuento (0 = sin oferta)</small>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg flex-1">
+                        <p class="text-sm text-gray-600">Precio final:</p>
+                        <p id="precio-final" class="text-lg font-bold text-green-600">$0</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Stock -->
@@ -202,6 +219,12 @@
                     if (ramSelect) ramSelect.value = '';
                     if (almacenamientoSelect) almacenamientoSelect.value = '';
                     if (colorSelect) colorSelect.value = '';
+                },
+                calcularPrecioFinal() {
+                    const precio = parseFloat(document.getElementById('precio-input').value) || 0;
+                    const descuento = parseFloat(document.getElementById('descuento-input').value) || 0;
+                    const final = descuento > 0 ? precio - (precio * descuento / 100) : precio;
+                    document.getElementById('precio-final').textContent = '$' + Math.round(final).toLocaleString('es-CO');
                 }
             }
         }

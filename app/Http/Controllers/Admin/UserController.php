@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Usuario::with('rol');
+        $query = Usuario::with('rol')->whereNull('deleted_at');
 
         if ($search = $request->buscar) {
             $query->where(function ($q) use ($search) {
@@ -23,15 +23,22 @@ class UserController extends Controller
             });
         }
 
+        if ($request->rol_id) {
+            $query->where('rol_id', $request->rol_id);
+        }
+
         $usuarios = $query->orderBy('created_at', 'desc')->paginate(20);
 
-        $totalUsuarios = Usuario::count();
-        $activos = Usuario::where('estado', 1)->count();
-        $nuevosEsteMes = Usuario::whereMonth('created_at', now()->month)
+        $totalUsuarios = Usuario::whereNull('deleted_at')->count();
+        $activos = Usuario::whereNull('deleted_at')->where('estado', 1)->count();
+        $nuevosEsteMes = Usuario::whereNull('deleted_at')
+            ->whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        return view('admin.usuarios.index', compact('usuarios', 'totalUsuarios', 'activos', 'nuevosEsteMes'));
+        $roles = \App\Models\Rol::all();
+
+        return view('admin.usuarios.index', compact('usuarios', 'totalUsuarios', 'activos', 'nuevosEsteMes', 'roles'));
     }
 
     public function create()
@@ -102,11 +109,18 @@ class UserController extends Controller
     public function destroy(Usuario $usuario)
     {
         if ($usuario->id === auth()->id()) {
-            return redirect()->route('admin.usuarios.index')->with('error', 'No puedes eliminar tu propio usuario.');
+            return redirect()->route('admin.usuarios.index')->with('error', 'No puedes desactivar tu propio usuario.');
         }
 
         $usuario->update(['estado' => 0]);
 
         return redirect()->route('admin.usuarios.index')->with('success', 'Usuario desactivado correctamente.');
+    }
+
+    public function activar(Usuario $usuario)
+    {
+        $usuario->update(['estado' => 1]);
+
+        return redirect()->route('admin.usuarios.index')->with('success', 'Usuario activado correctamente.');
     }
 }

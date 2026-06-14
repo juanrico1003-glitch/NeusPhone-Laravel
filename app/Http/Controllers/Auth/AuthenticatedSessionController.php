@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,20 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
         $request->session()->regenerate();
+
         $usuario = Auth::user();
+
+        if ($usuario->estaEliminado()) {
+            if ($usuario->puedeRecuperarse()) {
+                $usuario->recuperar();
+                return redirect()->route('cliente.dashboard')->with('success', 'Tu cuenta ha sido recuperada. Bienvenido de nuevo.');
+            }
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return redirect()->route('login')->with('error', 'Tu cuenta fue eliminada permanentemente. No es posible iniciar sesión.');
+        }
+
         // Si es admin
         if ($usuario->rol_id == 1) {
             return redirect()->route('admin.dashboard');

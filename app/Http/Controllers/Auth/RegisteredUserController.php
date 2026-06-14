@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeMailable;
 use App\Models\Usuario;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Http;
@@ -31,8 +33,10 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $rolId = \App\Models\Rol::where('nombre', 'cliente')->value('id') ?? 2;
+
         $usuario = Usuario::create([
-            'rol_id' => 2,
+            'rol_id' => $rolId,
             'nombres' => $request->nombres,
             'apellidos' => $request->apellidos,
             'cedula' => $request->cedula,
@@ -57,6 +61,13 @@ class RegisteredUserController extends Controller
             }
         } catch (\Exception $e) {
             Log::error('Error enviando webhook a n8n: ' . $e->getMessage());
+        }
+
+        // Enviar email de bienvenida
+        try {
+            Mail::to($usuario->correo)->send(new WelcomeMailable($usuario));
+        } catch (\Exception $e) {
+            Log::error('Error enviando email de bienvenida: ' . $e->getMessage());
         }
 
         Auth::login($usuario);

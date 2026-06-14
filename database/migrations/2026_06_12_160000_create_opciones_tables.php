@@ -13,12 +13,14 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->string('nombre', 100);
             $table->timestamps();
+            $table->unique(['categoria_id', 'nombre']);
         });
 
         Schema::create('colores', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 50);
             $table->timestamps();
+            $table->unique('nombre');
         });
 
         Schema::create('rams', function (Blueprint $table) {
@@ -26,6 +28,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->string('nombre', 50);
             $table->timestamps();
+            $table->unique(['categoria_id', 'nombre']);
         });
 
         Schema::create('almacenamientos', function (Blueprint $table) {
@@ -33,6 +36,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->string('nombre', 50);
             $table->timestamps();
+            $table->unique(['categoria_id', 'nombre']);
         });
 
         Schema::create('category_field_configs', function (Blueprint $table) {
@@ -40,6 +44,7 @@ return new class extends Migration
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->string('campo', 50);
             $table->timestamps();
+            $table->unique(['categoria_id', 'campo']);
         });
     }
 

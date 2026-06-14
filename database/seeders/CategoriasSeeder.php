@@ -13,7 +13,6 @@ class CategoriasSeeder extends Seeder
             ['nombre' => 'Celulares'],
             ['nombre' => 'Laptop'],
             ['nombre' => 'Tablets'],
-            ['nombre' => 'Portátiles'],
             ['nombre' => 'PC Escritorio'],
             ['nombre' => 'Monitores'],
             ['nombre' => 'Televisores'],

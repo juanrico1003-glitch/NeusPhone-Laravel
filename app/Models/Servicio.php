@@ -7,16 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 class Servicio extends Model
 {
     protected $fillable = [
-        'usuario_id',
-        'tipo_equipo',
-        'marca',
-        'modelo',
-        'descripcion_problema',
+        'nombre',
+        'descripcion',
         'estado'
     ];
 
-    public function usuario()
+    public function solicitudes()
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+        return $this->hasMany(SolicitudServicio::class, 'servicio_id');
     }
 }

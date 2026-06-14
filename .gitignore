@@ -1,9 +1,18 @@
 /vendor
 /node_modules
 .env
+.env.production
+
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+*.log
 
 /public/hot
 /public/storage
+/public/build/
 
 /storage/*.key
 
@@ -40,6 +49,20 @@
 !/bootstrap/cache/.gitignore
 !/bootstrap/cache/.gitkeep
 
-/public/productos/*
+# Cookies y sesiones
+cookies.txt
+*.cookies
 
-/public/build/
+/public/productos/*
+!/public/productos/.gitkeep
+
+.idea/
+.vscode/
+*.code-workspace
+
+.phpunit.result.cache
+.php_cs.cache
+.php_cs.dist
+heroku.yml
+docker-compose*.yml
+Dockerfile

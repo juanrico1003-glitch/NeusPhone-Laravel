@@ -16,7 +16,6 @@ class LoginRequest extends FormRequest
         return true;
     }
 
-    // Validaciones
     public function rules(): array
     {
         return [
@@ -25,7 +24,6 @@ class LoginRequest extends FormRequest
         ];
     }
 
-    // Método que intenta autenticar
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
@@ -34,7 +32,6 @@ class LoginRequest extends FormRequest
             ['correo' => $this->correo, 'password' => $this->password],
             $this->boolean('remember')
         )) {
-
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -45,7 +42,6 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
     }
 
-    // Protección contra intentos excesivos
     public function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
@@ -64,7 +60,6 @@ class LoginRequest extends FormRequest
         ]);
     }
 
-    // Clave para limitar intentos
     public function throttleKey(): string
     {
         return Str::transliterate(

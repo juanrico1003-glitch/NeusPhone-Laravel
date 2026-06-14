@@ -13,12 +13,13 @@ class Testimonio extends Model
         'producto_id',
         'comentario',
         'calificacion',
+        'imagen',
         'estado'
     ];
 
     public function usuario()
     {
-        return $this->belongsTo(User::class, 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
     public function producto()

@@ -29,7 +29,7 @@
                 <label class="block font-medium">Marca</label>
                 <select name="marca" class="w-full border rounded p-2" required>
                     <option value="">Seleccione una marca</option>
-                    <template x-for="marca in marcasFiltradas" :key="marca">
+                    <template x-for="marca in marcasFiltradas" :key="`marca-${selectedCategory}-${marca}`">
                         <option x-text="marca" :value="marca"
                             :selected='marca === @js($producto->marca)'></option>
                     </template>
@@ -46,8 +46,28 @@
             <!-- Precio -->
             <div class="mt-4">
                 <label class="block font-medium">Precio</label>
-                <input type="number" step="0.01" name="precio" value="{{ $producto->precio }}"
+                <input type="number" step="0.01" name="precio" id="precio-input" value="{{ $producto->precio }}"
                        class="w-full border rounded p-2" required>
+            </div>
+
+            <!-- Descuento -->
+            <div class="mt-4">
+                <label class="block font-medium">Descuento (%)</label>
+                <div class="flex gap-4 items-start">
+                    <div class="flex-1">
+                        <input type="number" step="0.01" min="0" max="100" name="descuento"
+                               value="{{ $producto->descuento ?? 0 }}" id="descuento-input"
+                               class="w-full border rounded p-2"
+                               @change="calcularPrecioFinal">
+                        <small class="text-gray-500">Porcentaje de descuento (0 = sin oferta)</small>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-lg flex-1">
+                        <p class="text-sm text-gray-600">Precio final:</p>
+                        <p id="precio-final" class="text-lg font-bold text-green-600">
+                            ${{ number_format($producto->precio_con_descuento, 0, ',', '.') }}
+                        </p>
+                    </div>
+                </div>
             </div>
 
             <!-- Stock -->
@@ -84,7 +104,7 @@
                 <label class="block font-medium" x-text="etiquetaRam"></label>
                 <select name="ram" class="w-full border rounded p-2">
                     <option value="">Seleccione</option>
-                    <template x-for="ram in ramsFiltradas" :key="ram">
+                    <template x-for="ram in ramsFiltradas" :key="`ram-${selectedCategory}-${ram}`">
                         <option x-text="ram" :value="ram"
                             :selected='ram === @js($producto->ram)'></option>
                     </template>
@@ -96,7 +116,7 @@
                 <label class="block font-medium" x-text="etiquetaAlmacenamiento"></label>
                 <select name="almacenamiento" class="w-full border rounded p-2">
                     <option value="">Seleccione</option>
-                    <template x-for="alm in almacenamientosFiltrados" :key="alm">
+                    <template x-for="alm in almacenamientosFiltrados" :key="`almacenamiento-${selectedCategory}-${alm}`">
                         <option x-text="alm" :value="alm"
                             :selected='alm === @js($producto->almacenamiento)'></option>
                     </template>
@@ -139,6 +159,18 @@
                 </button>
             </div>
         </form>
+
+        {{-- Imágenes del producto --}}
+        <div class="mt-8 p-6 bg-white rounded-xl border">
+            <h3 class="font-bold text-lg mb-4">Imágenes del producto</h3>
+            <div class="flex flex-wrap gap-4 mb-4">
+                @php $imgs = is_array($producto->imagenes) ? $producto->imagenes : (is_string($producto->imagenes) ? json_decode($producto->imagenes, true) : []); @endphp
+                @foreach($imgs as $img)
+                    <img src="{{ asset('productos/'.$img) }}" class="w-24 h-24 object-cover rounded border">
+                @endforeach
+            </div>
+            <p class="text-sm text-gray-500">Las imágenes se gestionan desde el campo "imagenes" en el formulario superior.</p>
+        </div>
     </div>
 
     <script>
@@ -208,6 +240,12 @@
                     if (ramSelect) ramSelect.value = '';
                     if (almacenamientoSelect) almacenamientoSelect.value = '';
                     if (colorSelect) colorSelect.value = '';
+                },
+                calcularPrecioFinal() {
+                    const precio = parseFloat(document.getElementById('precio-input').value) || 0;
+                    const descuento = parseFloat(document.getElementById('descuento-input').value) || 0;
+                    const final = descuento > 0 ? precio - (precio * descuento / 100) : precio;
+                    document.getElementById('precio-final').textContent = '$' + Math.round(final).toLocaleString('es-CO');
                 }
             }
         }

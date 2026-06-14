@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewServicioAdminMailable;
 use App\Models\SolicitudServicio;
 use App\Models\Servicio;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class ServicioController extends Controller
             'accesorios_incluidos' => 'nullable|string|max:2000',
         ]);
 
-        SolicitudServicio::create([
+        $servicio = SolicitudServicio::create([
             'usuario_id' => Auth::id(),
             'servicio_id' => $validated['servicio_id'],
             'descripcion_problema' => $validated['descripcion_problema'],
@@ -54,6 +55,15 @@ class ServicioController extends Controller
             'accesorios_incluidos' => $validated['accesorios_incluidos'],
             'estado' => 'pendiente'
         ]);
+
+        try {
+            $admins = \App\Models\Usuario::whereHas('rol', fn($q) => $q->where('nombre', 'admin'))->get();
+            foreach ($admins as $admin) {
+                \Illuminate\Support\Facades\Mail::to($admin->correo)->queue(new NewServicioAdminMailable($servicio));
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Error notificando admin de servicio: ' . $e->getMessage());
+        }
 
         return redirect()->route('servicios.index')
             ->with('success', 'Solicitud enviada correctamente. Te contactaremos pronto.');

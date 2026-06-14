@@ -2,16 +2,24 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Categoria extends Model
 {
+    use HasFactory;
     protected $table = 'categorias';
 
     protected $fillable = [
         'nombre',
-        'estado'
+        'estado',
+        'imagen'
     ];
+
+    public function getImagenUrlAttribute()
+    {
+        return $this->imagen ? asset('categorias/' . $this->imagen) : null;
+    }
 
     public function productos()
     {
