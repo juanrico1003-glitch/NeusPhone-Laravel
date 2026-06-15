@@ -433,6 +433,7 @@ class ProductoOpcionesSeeder extends Seeder
         return [
             'Celulares' => ['16 GB', '32 GB', '64 GB', '128 GB', '256 GB', '512 GB', '1 TB'],
             'Tablets' => ['16 GB', '32 GB', '64 GB', '128 GB', '256 GB', '512 GB', '1 TB', '2 TB'],
+            'Laptop' => ['128 GB', '256 GB', '512 GB', '1 TB', '2 TB', '4 TB', '8 TB'],
             'PC Escritorio' => ['128 GB', '256 GB', '512 GB', '1 TB', '2 TB', '4 TB', '8 TB', '16 TB', '20 TB'],
             'Smartwatches' => ['4 GB', '8 GB', '16 GB', '32 GB', '64 GB', '128 GB'],
             'Discos SSD' => [

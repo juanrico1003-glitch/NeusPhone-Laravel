@@ -12,13 +12,19 @@ class SocialLoginController extends Controller
 {
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        $redirectUrl = url('/auth/google/callback');
+        return Socialite::driver('google')
+            ->redirectUrl($redirectUrl)
+            ->redirect();
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $redirectUrl = url('/auth/google/callback');
+            $googleUser = Socialite::driver('google')
+                ->redirectUrl($redirectUrl)
+                ->user();
         } catch (\Exception $e) {
             Log::error('Google callback error: ' . $e->getMessage());
             return redirect()->route('login')->with('error', 'Error al conectar con Google.');

@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
             CategoriasSeeder::class,
             ServiciosSeeder::class,
             ProductoOpcionesSeeder::class,
+            ProductoSeeder::class,
         ]);
     }
 }

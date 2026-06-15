@@ -39,7 +39,8 @@ Route::middleware('guest')->group(function () {
         ->name('password.store');
 });
 
-Route::get('auth/google/callback', [SocialLoginController::class, 'handleGoogleCallback']);
+Route::get('auth/google/callback', [SocialLoginController::class, 'handleGoogleCallback'])
+    ->name('auth.google.callback');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', EmailVerificationPromptController::class)

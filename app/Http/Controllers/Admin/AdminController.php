@@ -140,7 +140,7 @@ class AdminController extends Controller
 
     public function testimonios()
     {
-        $testimonios = Testimonio::with('usuario')->orderBy('created_at', 'desc')->get();
+        $testimonios = Testimonio::with('usuario')->orderBy('created_at', 'desc')->paginate(10);
         return view('admin.testimonios.index', compact('testimonios'));
     }
 

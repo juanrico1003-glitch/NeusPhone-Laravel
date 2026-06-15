@@ -1,7 +1,9 @@
 /vendor
 /node_modules
 .env
+.env.backup
 .env.production
+.env.local
 
 .DS_Store
 Thumbs.db
@@ -42,6 +44,9 @@ Thumbs.db
 /storage/framework/views/*
 !/storage/framework/views/.gitkeep
 
+/storage/framework/testing/*
+!/storage/framework/testing/.gitkeep
+
 /storage/logs/*
 !/storage/logs/.gitkeep
 
@@ -61,8 +66,11 @@ cookies.txt
 *.code-workspace
 
 .phpunit.result.cache
+.phpunit.cache
 .php_cs.cache
 .php_cs.dist
+
+/coverage
 heroku.yml
 docker-compose*.yml
 Dockerfile
