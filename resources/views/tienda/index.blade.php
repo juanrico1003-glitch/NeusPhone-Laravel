@@ -2,102 +2,104 @@
 
 @section('contenido')
 
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
     <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
         Productos disponibles
     </h2>
-    <p class="text-sm text-gray-500">{{ count($productos) }} productos encontrados</p>
+    <p class="text-sm text-gray-500 shrink-0">{{ count($productos) }} productos encontrados</p>
 </div>
 
-<!-- Filtros -->
-<form method="GET" action="{{ route('tienda') }}" class="mb-8 bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-        <!-- Categoría -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Categoría</label>
-            <select name="categoria"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Todas</option>
-                @foreach($categorias as $cat)
-                    <option value="{{ $cat->id }}" {{ request('categoria') == $cat->id ? 'selected' : '' }}>
-                        {{ $cat->nombre }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <!-- Marca -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Marca</label>
-            <select name="marca"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Todas</option>
-                @foreach($marcas as $marca)
-                    <option value="{{ $marca }}"
-                        {{ request('marca') == $marca ? 'selected' : '' }}>
-                        {{ $marca }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <!-- Condicion -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Condición</label>
-            <select name="tipo"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Todas</option>
-                <option value="nuevo" {{ request('tipo') == 'nuevo' ? 'selected' : '' }}>Nuevo</option>
-                <option value="usado" {{ request('tipo') == 'usado' ? 'selected' : '' }}>Usado</option>
-            </select>
-        </div>
-        <!-- Ofertas -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Ofertas</label>
-            <select name="oferta"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Todos</option>
-                <option value="1" {{ request('oferta') == '1' ? 'selected' : '' }}>Solo ofertas</option>
-            </select>
-        </div>
-        <!-- Precio min -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Precio mínimo</label>
-            <input type="number" name="precio_min" value="{{ request('precio_min') }}"
-                   placeholder="$0"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-        </div>
-        <!-- Precio max -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Precio máximo</label>
-            <input type="number" name="precio_max" value="{{ request('precio_max') }}"
-                   placeholder="$999999"
-                   class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
-        </div>
-        <!-- Orden -->
-        <div class="flex flex-col">
-            <label class="text-sm font-semibold text-gray-700 mb-2">Ordenar por</label>
-            <select name="orden"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 pr-10 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition">
-                <option value="">Relevancia</option>
-                <option value="asc" {{ request('orden') == 'asc' ? 'selected' : '' }}>Menor precio</option>
-                <option value="desc" {{ request('orden') == 'desc' ? 'selected' : '' }}>Mayor precio</option>
-            </select>
-        </div>
-        <!-- Boton Filtrar -->
-        <div class="flex items-end">
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition transform hover:scale-105 active:scale-95 text-sm">
-                Filtrar
-            </button>
-        </div>
-    </div>
-</form>
+<div class="mb-6" x-data="{ filtrosAbiertos: false }">
+    <button @click="filtrosAbiertos = !filtrosAbiertos"
+            class="md:hidden w-full flex items-center justify-between bg-white px-4 py-3 rounded-lg shadow-sm border border-gray-200 text-gray-700 font-medium mb-3">
+        <span class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+            Filtros
+        </span>
+        <svg class="w-5 h-5 transition-transform" :class="{'rotate-180': filtrosAbiertos}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+    </button>
 
-<!-- Productos -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+    <form method="GET" action="{{ route('tienda') }}"
+          class="bg-white p-4 md:p-6 rounded-lg shadow-sm border border-gray-200"
+          :class="{'hidden md:block': !filtrosAbiertos}">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Categoría</label>
+                <select name="categoria"
+                class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm transition">
+                    <option value="">Todas</option>
+                    @foreach($categorias as $cat)
+                        <option value="{{ $cat->id }}" {{ request('categoria') == $cat->id ? 'selected' : '' }}>
+                            {{ $cat->nombre }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Marca</label>
+                <select name="marca"
+                class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm transition">
+                    <option value="">Todas</option>
+                    @foreach($marcas as $marca)
+                        <option value="{{ $marca }}" {{ request('marca') == $marca ? 'selected' : '' }}>
+                            {{ $marca }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Condición</label>
+                <select name="tipo"
+                class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm transition">
+                    <option value="">Todas</option>
+                    <option value="nuevo" {{ request('tipo') == 'nuevo' ? 'selected' : '' }}>Nuevo</option>
+                    <option value="usado" {{ request('tipo') == 'usado' ? 'selected' : '' }}>Usado</option>
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Ofertas</label>
+                <select name="oferta"
+                class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm transition">
+                    <option value="">Todos</option>
+                    <option value="1" {{ request('oferta') == '1' ? 'selected' : '' }}>Solo ofertas</option>
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Ordenar</label>
+                <select name="orden"
+                class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 bg-white appearance-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs md:text-sm transition">
+                    <option value="">Relevancia</option>
+                    <option value="asc" {{ request('orden') == 'asc' ? 'selected' : '' }}>Menor precio</option>
+                    <option value="desc" {{ request('orden') == 'desc' ? 'selected' : '' }}>Mayor precio</option>
+                </select>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Precio min</label>
+                <input type="number" name="precio_min" value="{{ request('precio_min') }}"
+                       placeholder="$0"
+                       class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs md:text-sm font-semibold text-gray-700 mb-1.5">Precio max</label>
+                <input type="number" name="precio_max" value="{{ request('precio_max') }}"
+                       placeholder="$999999"
+                       class="w-full border border-gray-300 rounded-lg px-2 md:px-3 py-2 text-xs md:text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+            </div>
+            <div class="flex items-end">
+                <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition text-xs md:text-sm">
+                    Filtrar
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-8">
 
     @forelse($productos as $producto)
         <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full">
-            
-            <!-- Imagen -->
+
             <div class="relative overflow-hidden bg-gray-100 aspect-square">
                 <a href="{{ route('tienda.producto', $producto->id) }}" class="block h-full">
                     <img src="{{ asset('productos/'.(!empty($producto->imagenes) ? $producto->imagenes[0] : 'default.png')) }}"
@@ -106,59 +108,55 @@
                 </a>
 
                 @if($producto->tiene_descuento)
-                <div class="absolute top-3 left-3 z-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+                <div class="absolute top-2 left-2 z-10 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
                     -{{ $producto->descuento_formateado }}%
                 </div>
                 @endif
 
-                <!-- Condicion -->
-                <div class="absolute top-3 right-3">
-                    <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-600 text-white">
+                <div class="absolute top-2 right-2">
+                    <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-blue-600 text-white">
                         {{ $producto->tipo === 'nuevo' ? 'Nuevo' : 'Usado' }}
                     </span>
                 </div>
             </div>
 
-            <!-- Contenido -->
-            <div class="flex-1 p-4 flex flex-col">
-                <h3 class="text-sm md:text-base font-semibold text-gray-800 line-clamp-2 mb-2 group-hover:text-blue-600 transition">
+            <div class="flex-1 p-3 md:p-4 flex flex-col">
+                <h3 class="text-xs md:text-sm lg:text-base font-semibold text-gray-800 line-clamp-2 mb-1 group-hover:text-blue-600 transition">
                     {{ $producto->nombre }}
                 </h3>
 
-                <p class="text-xs text-gray-500 mb-1">
+                <p class="text-[10px] md:text-xs text-gray-500 mb-1">
                     {{ $producto->categoria->nombre ?? 'Sin categoría' }}
                 </p>
 
                 @if($producto->tiene_descuento)
-                <p class="text-sm text-gray-400 line-through">${{ number_format($producto->precio, 0, ',', '.') }}</p>
-                <p class="text-lg md:text-xl font-bold text-green-600 my-2">${{ number_format($producto->precio_con_descuento, 0, ',', '.') }}</p>
+                <p class="text-[11px] md:text-sm text-gray-400 line-through">${{ number_format($producto->precio, 0, ',', '.') }}</p>
+                <p class="text-sm md:text-lg lg:text-xl font-bold text-green-600 my-1 md:my-2">${{ number_format($producto->precio_con_descuento, 0, ',', '.') }}</p>
                 @else
-                <p class="text-lg md:text-xl font-bold text-green-600 my-2">
+                <p class="text-sm md:text-lg lg:text-xl font-bold text-green-600 my-1 md:my-2">
                     ${{ number_format($producto->precio, 0, ',', '.') }}
                 </p>
                 @endif
 
-                <!-- Indicator -->
-                <div class="mb-3">
+                <div class="mb-2 md:mb-3">
                     @if($producto->stock > 5)
-                        <span class="text-xs text-green-600 font-semibold">✓ En stock</span>
+                        <span class="text-[10px] md:text-xs text-green-600 font-semibold">✓ En stock</span>
                     @elseif($producto->stock > 0)
-                        <span class="text-xs text-orange-600 font-semibold">Pocas unidades</span>
+                        <span class="text-[10px] md:text-xs text-orange-600 font-semibold">Pocas unidades</span>
                     @else
-                        <span class="text-xs text-red-600 font-semibold">✕ Agotado</span>
+                        <span class="text-[10px] md:text-xs text-red-600 font-semibold">✕ Agotado</span>
                     @endif
                 </div>
 
-                <!-- Botón -->
                 <a href="{{ route('tienda.producto', $producto->id) }}"
-                   class="mt-auto block text-center bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-2 md:py-2.5 rounded-lg transition transform hover:shadow-lg active:scale-95">
+                   class="mt-auto block text-center bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-1.5 md:py-2.5 rounded-lg transition text-xs md:text-sm">
                     Ver detalles
                 </a>
             </div>
         </div>
     @empty
         <div class="col-span-full py-12 text-center">
-            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-12 md:w-16 h-12 md:h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
             </svg>
             <p class="text-gray-500 font-semibold text-lg">No hay productos disponibles</p>
@@ -168,11 +166,8 @@
 
 </div>
 
-<!-- Paginacion -->
 <div class="mt-8">
     {{ $productos->links() }}
-</div>
-
 </div>
 
 @endsection

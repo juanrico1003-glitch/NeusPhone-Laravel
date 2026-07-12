@@ -20,43 +20,93 @@
 </head>
 <body class="font-sans relative bg-blue-50 overflow-x-hidden">
     @if (!request()->routeIs('dashboard.main'))
-        <div class="fixed top-1/2 left-1/2 
-                    -translate-x-1/2 -translate-y-1/2 
-                    -rotate-[26deg] 
-                    text-[60px] md:text-[150px] lg:text-[250px] font-bold 
-                    text-blue-600/10 
-                    whitespace-nowrap 
-                    pointer-events-none 
-                    select-none 
-                    -z-10">
+        <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-[26deg] text-[60px] md:text-[150px] lg:text-[250px] font-bold text-blue-600/10 whitespace-nowrap pointer-events-none select-none -z-10">
             NeusPhone
         </div>
     @endif
     <div class="min-h-screen flex flex-col">
-        <!-- Navbar -->
-        <nav class="bg-[#004080] shadow-md rounded-lg md:rounded-xl border-white m-2">
-            <div class="max-w-7xl mx-auto px-6 md:px-6 py-1 md:py-2 flex justify-between items-center">
-                <!-- Logo -->
+
+        {{-- Mobile Navbar --}}
+        <nav class="md:hidden bg-[#004080] shadow-md rounded-lg border-white m-2" x-data="{ open: false }">
+            <div class="px-3 py-2">
+                <div class="flex items-center justify-between gap-2">
+                    <a href="{{ route('dashboard.main') }}" class="flex items-center gap-2 text-xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
+                        <img src="/logo.png" alt="Logo" class="w-10 h-10 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
+                        NeusPhone
+                    </a>
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('carrito.index') }}" title="Carrito" class="relative bg-white/10 hover:bg-white/20 px-2 py-2 rounded-lg transition">
+                            <span class="text-lg">🛒</span>
+                            @if(count(session('carrito', [])) > 0)
+                                <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                                    {{ count(session('carrito', [])) }}
+                                </span>
+                            @endif
+                        </a>
+                        <button @click="open = !open" class="text-white hover:text-blue-200 focus:outline-none p-2 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div x-show="open" @click.away="open = false" x-transition class="mt-2 bg-white rounded-lg shadow-lg py-2">
+                    <div class="px-4 py-2 text-gray-600 text-sm font-medium border-b border-gray-100">
+                        Bienvenido, {{ auth()->user()->nombres ?? '' }}
+                    </div>
+                    <a href="{{ route('tienda') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">Tienda</a>
+                    <a href="{{ route('pedidos.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">Mis Pedidos</a>
+                    <a href="{{ route('favoritos.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100 text-sm">Favoritos</a>
+                    <div class="border-t border-gray-200 my-1"></div>
+                    <form method="POST" action="{{ route('logout') }}" class="block">
+                        @csrf
+                        <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 text-sm font-medium">Cerrar sesión</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        {{-- Desktop Navbar --}}
+        <nav class="hidden md:block bg-[#004080] shadow-md rounded-lg md:rounded-xl border-white m-2">
+            <div class="max-w-7xl mx-auto px-6 py-1 md:py-2 flex justify-between items-center">
                 <a href="{{ route('dashboard.main') }}"
                    class="flex items-center gap-2 text-2xl md:text-3xl font-bold text-white hover:text-blue-200 transition flex-shrink-0">
                     <img src="/logo.png" alt="Logo" class="w-12 h-12 rounded-full object-cover ring-2 ring-white/30 shadow-md" />
                     NeusPhone
                 </a>
-                <!-- Usuario -->
-                <div class="flex items-center gap-2 md:gap-4">
-                    <span class="text-white text-xs md:text-sm font-medium truncate max-w-[150px]">
+                <div class="flex items-center gap-4">
+                    <a href="{{ route('carrito.index') }}" class="relative bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg transition" title="Carrito">
+                        🛒
+                        @if(count(session('carrito', [])) > 0)
+                            <span class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full font-bold">
+                                {{ count(session('carrito', [])) }}
+                            </span>
+                        @endif
+                    </a>
+                    <span class="text-white text-sm font-medium truncate max-w-[150px]">
                         {{ auth()->user()->nombres ?? '' }}
                     </span>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 md:py-2 rounded-lg text-xs md:text-sm transition font-medium whitespace-nowrap">
-                            Cerrar sesión
+                    <div class="relative" x-data="{ open: false }">
+                        <button @click="open = !open" class="text-white hover:text-blue-200 focus:outline-none p-2 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
                         </button>
-                    </form>
+                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
+                            <a href="{{ route('tienda') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Tienda</a>
+                            <a href="{{ route('pedidos.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Mis Pedidos</a>
+                            <a href="{{ route('favoritos.index') }}" class="block px-4 py-2 text-gray-800 hover:bg-blue-100">Favoritos</a>
+                            <div class="border-t border-gray-200 my-1"></div>
+                            <form method="POST" action="{{ route('logout') }}" class="block">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-4 py-2 text-gray-800 hover:bg-blue-100">Cerrar sesión</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
-        <!-- Header -->
+
         @isset($header)
             <header class="bg-blue-100 border-b border-blue-200">
                 <div class="max-w-7xl mx-auto py-4 md:py-6 px-4 md:px-6">
@@ -64,88 +114,83 @@
                 </div>
             </header>
         @endisset
-        <!-- Contenido -->
+
         <main class="flex-1 max-w-7xl mx-auto w-full px-4 md:px-6 py-6 md:py-8">
             {{ $slot }}
         </main>
-        <!-- Footer -->
+
         <footer id="footer" class="bg-[#004080] text-white py-8 md:py-6 px-4 md:px-8 mt-10 rounded-lg md:rounded-xl m-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-        <!-- Marca -->
-        <div class="flex flex-col items-center text-center">
-            <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">NeusPhone</h4>
-            <p class="text-xs md:text-sm opacity-80 leading-relaxed">Venta y reparación de dispositivos electrónicos.</p>
-            <!-- Logo -->
-            <div class="mt-0 flex justify-center w-full">
-                <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-100 drop-shadow-md" />
+            <div class="flex flex-col items-center text-center">
+                <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">NeusPhone</h4>
+                <p class="text-xs md:text-sm opacity-80 leading-relaxed">Venta y reparación de dispositivos electrónicos.</p>
+                <div class="mt-0 flex justify-center w-full">
+                    <x-logo class="w-20 h-20 md:w-24 md:h-24 text-white opacity-100 drop-shadow-md" />
+                </div>
             </div>
-        </div>
-        <!-- Contacto -->
-        <div>
-            <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">Contacto</h4>
-            <ul class="text-xs md:text-sm opacity-80 space-y-3">
-                <li>
-                    <a href="mailto:phoneneus@gmail.com" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
-                        <x-icons.mail class="w-5 h-5" />
-                        <span class="break-all">phoneneus@gmail.com</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://wa.me/573004060632" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
-                        <x-icons.whatsapp class="w-5 h-5" />
-                        <span>+57 300 406 0632</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <!-- Redes -->
-        <div>
-            <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">Redes</h4>
-            <ul class="text-xs md:text-sm opacity-80 space-y-3">
-                <li>
-                    <a href="https://www.facebook.com/share/18S5AyW8Wm/" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
-                        <x-icons.facebook class="w-5 h-5" />
-                        <span>Facebook</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://www.instagram.com/neusphone?igsh=MWNkd3l4ZWRiZWpnZw==" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
-                        <x-icons.instagram class="w-5 h-5" />
-                        <span>@neusphone</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://tiktok.com/@neusphone2" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
-                        <x-icons.tiktok class="w-5 h-5" />
-                        <span>@neusphone2</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="https://github.com/juanrico1003-glitch" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
-                        <x-icons.github class="w-5 h-5" />
-                        <span>@juanrico1003-glitch</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <!-- Enlaces -->
-        <div>
-            <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">Nosotros</h4>
-            <ul class="text-xs md:text-sm opacity-80 space-y-2">
-                <li>
-                    <a href="{{ route('dashboard.main') }}#quienes-somos" class="hover:opacity-100 transition-opacity">Quiénes somos</a>
-                </li>
-                <li>
-                    <a href="{{ route('politicas') }}" class="hover:opacity-100 transition-opacity">Políticas</a>
-                </li>
-                <li>
-                    <a href="{{ route('terminos') }}" class="hover:opacity-100 transition-opacity">Términos</a>
-                </li>
-            </ul>
-        </div>
-        <div class="col-span-1 sm:col-span-2 md:col-span-4 pt-6 border-t border-white/20 text-center text-xs md:text-sm opacity-80">
-            ©2026 NeusPhone. Panel Administrativo.
-        </div>
-    </footer>
+            <div>
+                <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">Contacto</h4>
+                <ul class="text-xs md:text-sm opacity-80 space-y-3">
+                    <li>
+                        <a href="mailto:phoneneus@gmail.com" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                            <x-icons.mail class="w-5 h-5 shrink-0" />
+                            <span class="break-all">phoneneus@gmail.com</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://wa.me/573004060632" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                            <x-icons.whatsapp class="w-5 h-5 shrink-0" />
+                            <span>+57 300 406 0632</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">Redes</h4>
+                <ul class="text-xs md:text-sm opacity-80 space-y-3">
+                    <li>
+                        <a href="https://www.facebook.com/share/18S5AyW8Wm/" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                            <x-icons.facebook class="w-5 h-5 shrink-0" />
+                            <span>Facebook</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/neusphone?igsh=MWNkd3l4ZWRiZWpnZw==" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                            <x-icons.instagram class="w-5 h-5 shrink-0" />
+                            <span>@neusphone</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://tiktok.com/@neusphone2" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                            <x-icons.tiktok class="w-5 h-5 shrink-0" />
+                            <span>@neusphone2</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/juanrico1003-glitch" target="_blank" class="flex items-center gap-3 hover:opacity-100 transition-opacity">
+                            <x-icons.github class="w-5 h-5 shrink-0" />
+                            <span>@juanrico1003-glitch</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-base md:text-lg mb-3 md:mb-4">Nosotros</h4>
+                <ul class="text-xs md:text-sm opacity-80 space-y-2">
+                    <li>
+                        <a href="{{ route('dashboard.main') }}#quienes-somos" class="hover:opacity-100 transition-opacity">Quiénes somos</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('politicas') }}" class="hover:opacity-100 transition-opacity">Políticas</a>
+                    </li>
+                    <li>
+                        <a href="{{ route('terminos') }}" class="hover:opacity-100 transition-opacity">Términos</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-span-1 sm:col-span-2 md:col-span-4 pt-6 border-t border-white/20 text-center text-xs md:text-sm opacity-80">
+                ©2026 NeusPhone. Panel Administrativo.
+            </div>
+        </footer>
     </div>
 </body>
 </html>

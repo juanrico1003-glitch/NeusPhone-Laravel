@@ -1,74 +1,68 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl md:text-3xl">
-            Detalle del Producto
+            {{ $producto->nombre }}
         </h2>
     </x-slot>
 
-    <!-- Alertas -->
     @if(session('error'))
         <div class="bg-red-500 text-white p-3 md:p-4 rounded-lg mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></path></svg>
-            {{ session('error') }}
+            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></path></svg>
+            <span>{{ session('error') }}</span>
         </div>
     @endif
 
     @if(session('success'))
         <div class="bg-green-600 text-white p-3 md:p-4 rounded-lg mb-4 flex items-center gap-2">
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></path></svg>
-            {{ session('success') }}
+            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></path></svg>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <div class="p-4 md:p-6 max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12">
+        {{-- 1. PRODUCT NAME (mobile only, desktop shows in header) --}}
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 leading-tight mb-6 md:hidden">
+            {{ $producto->nombre }}
+        </h1>
 
-            <!-- Columna Izquierda -->
-            <div class="flex flex-col gap-6">
-                <!-- Carrusel imagenes Alpine.js -->
-                <div x-data="{ 
-                    imagenes: {{ json_encode($producto->imagenes ?? ['default.png']) }},
-                    imagenActiva: 0,
-                    lightboxAbierto: false,
-                    lightboxIndex: 0
-                 }" class="flex flex-col gap-3 md:gap-4">
-                 
-                <!-- Imagen Principal -->
-                <div @click="lightboxAbierto = true; lightboxIndex = imagenActiva" class="w-full aspect-square bg-white rounded-xl shadow-lg border border-gray-100 flex items-center justify-center overflow-hidden relative group cursor-pointer">
+        {{-- 2. PHOTOS + VARIANTS & BUTTONS --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 mb-8 md:mb-12">
+
+            {{-- PHOTOS CAROUSEL --}}
+            <div class="flex flex-col gap-3 md:gap-4" x-data="{
+                imagenes: {{ json_encode($producto->imagenes ?? ['default.png']) }},
+                imagenActiva: 0,
+                lightboxAbierto: false,
+                lightboxIndex: 0
+            }">
+                <div @click="lightboxAbierto = true; lightboxIndex = imagenActiva"
+                     class="w-full aspect-square bg-white rounded-xl shadow-lg border border-gray-100 flex items-center justify-center overflow-hidden relative group cursor-pointer">
                     <template x-for="(img, index) in imagenes" :key="index">
-                        <img x-show="imagenActiva === index" 
+                        <img x-show="imagenActiva === index"
                              x-transition.opacity.duration.300ms
-                             :src="'{{ asset('productos/') }}/' + img" 
+                             :src="'{{ asset('productos/') }}/' + img"
                              :alt="'Producto ' + (index + 1)"
                              class="absolute inset-0 w-full h-full object-contain p-4">
                     </template>
-                    
-                    <!-- Icono lupa -->
                     <div class="absolute top-3 left-3 bg-black/40 hover:bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
                     </div>
-                    
-                    <!-- Controles  -->
-                    <button x-show="imagenes.length > 1" 
-                            @click="imagenActiva = imagenActiva === 0 ? imagenes.length - 1 : imagenActiva - 1" 
+                    <button x-show="imagenes.length > 1"
+                            @click="imagenActiva = imagenActiva === 0 ? imagenes.length - 1 : imagenActiva - 1"
                             class="absolute left-2 md:left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-9 md:w-10 h-9 md:h-10 flex items-center justify-center transition focus:outline-none opacity-0 group-hover:opacity-100">
                         <svg class="w-5 md:w-6 h-5 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    
-                    <button x-show="imagenes.length > 1" 
-                            @click="imagenActiva = imagenActiva === imagenes.length - 1 ? 0 : imagenActiva + 1" 
+                    <button x-show="imagenes.length > 1"
+                            @click="imagenActiva = imagenActiva === imagenes.length - 1 ? 0 : imagenActiva + 1"
                             class="absolute right-2 md:right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-9 md:w-10 h-9 md:h-10 flex items-center justify-center transition focus:outline-none opacity-0 group-hover:opacity-100">
                         <svg class="w-5 md:w-6 h-5 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
-
-                    <!-- Contador de imagenes -->
                     <div x-show="imagenes.length > 1" class="absolute bottom-3 right-3 bg-black/50 text-white text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5 rounded-full">
                         <span x-text="imagenActiva + 1"></span> / <span x-text="imagenes.length"></span>
                     </div>
                 </div>
 
-                <!-- Miniaturas -->
                 <div x-show="imagenes.length > 1" class="flex gap-2 overflow-x-auto pb-2 snap-x">
                     <template x-for="(img, index) in imagenes" :key="index">
                         <button @click="imagenActiva = index"
@@ -79,9 +73,8 @@
                     </template>
                 </div>
 
-                <!-- Lightbox -->
                 <template x-teleport="body">
-                    <div x-show="lightboxAbierto" 
+                    <div x-show="lightboxAbierto"
                          @click.away="lightboxAbierto = false"
                          @keydown.escape="lightboxAbierto = false"
                          class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
@@ -97,28 +90,12 @@
                 </template>
             </div>
 
-            <!-- Caracteristicas -->
-            @if($producto->caracteristicas)
-                <div class="mt-4 md:mt-6 text-sm md:text-base text-gray-700 leading-relaxed bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                    <p class="font-semibold text-gray-800 mb-3 text-lg border-b pb-2">Características Principales</p>
-                    <ul class="list-disc pl-5 space-y-1.5 marker:text-blue-500">
-                        @foreach(explode("\n", $producto->caracteristicas) as $caracteristica)
-                            @if(trim($caracteristica) !== '')
-                                <li>{{ trim($caracteristica) }}</li>
-                            @endif
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            </div>
-
-            <!-- Informacion del Producto -->
+            {{-- VARIANTS & BUTTONS --}}
             <div class="flex flex-col">
-                <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 leading-tight mb-2">
+                <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800 leading-tight mb-4 hidden md:block">
                     {{ $producto->nombre }}
                 </h1>
 
-                <!-- Metadata -->
                 <div class="flex flex-wrap gap-3 md:gap-4 mb-4 text-sm md:text-base text-gray-600">
                     @if($producto->categoria)
                         <div>
@@ -132,15 +109,13 @@
                     @endif
                 </div>
 
-                <!-- Tipo de producto -->
                 <div class="mb-4">
                     <span class="inline-block px-3 py-1 text-xs md:text-sm font-bold rounded-full {{ $producto->tipo === 'nuevo' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }}">
                         {{ $producto->tipo === 'nuevo' ? 'Producto Nuevo' : 'Producto Usado' }}
                     </span>
                 </div>
 
-                <!-- Precio -->
-                <div class="mb-6 md:mb-8">
+                <div class="mb-6">
                     <p class="text-sm text-gray-600 mb-1">Precio</p>
                     @if($producto->tiene_descuento)
                     <div class="flex items-center gap-3 mb-1">
@@ -157,8 +132,7 @@
                     @endif
                 </div>
 
-                <!-- Stock -->
-                <div class="mb-6 md:mb-8">
+                <div class="mb-6">
                     @if($producto->stock > 0)
                         <span class="inline-flex items-center gap-2 text-sm md:text-base font-semibold text-green-600">
                             <span class="w-2 h-2 bg-green-600 rounded-full"></span>
@@ -172,13 +146,12 @@
                     @endif
                 </div>
 
-                <!-- Variantes de Color -->
                 @if(isset($coloresDisponibles) && count($coloresDisponibles) > 0)
                 <div class="mb-4">
                     <p class="text-sm font-semibold text-gray-800 mb-2">Color</p>
                     <div class="flex flex-wrap gap-2">
                         @foreach($coloresDisponibles as $c)
-                            <a href="{{ route('tienda.producto', $c['producto_id']) }}" 
+                            <a href="{{ route('tienda.producto', $c['producto_id']) }}"
                                class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
                                {{ $c['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
                                {{ !$c['has_stock'] ? 'opacity-50 line-through' : '' }}">
@@ -192,13 +165,12 @@
                 </div>
                 @endif
 
-                <!-- Variantes de RAM -->
                 @if(isset($ramsDisponibles) && count($ramsDisponibles) > 0)
                 <div class="mb-4">
                     <p class="text-sm font-semibold text-gray-800 mb-2">Memoria RAM</p>
                     <div class="flex flex-wrap gap-2">
                         @foreach($ramsDisponibles as $r)
-                            <a href="{{ route('tienda.producto', $r['producto_id']) }}" 
+                            <a href="{{ route('tienda.producto', $r['producto_id']) }}"
                                class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
                                {{ $r['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
                                {{ !$r['has_stock'] ? 'opacity-50 line-through' : '' }}">
@@ -212,13 +184,12 @@
                 </div>
                 @endif
 
-                <!-- Variantes de Almacenamiento -->
                 @if(isset($almacenamientosDisponibles) && count($almacenamientosDisponibles) > 0)
-                <div class="mb-6 md:mb-8">
+                <div class="mb-6">
                     <p class="text-sm font-semibold text-gray-800 mb-2">Almacenamiento</p>
                     <div class="flex flex-wrap gap-2">
                         @foreach($almacenamientosDisponibles as $a)
-                            <a href="{{ route('tienda.producto', $a['producto_id']) }}" 
+                            <a href="{{ route('tienda.producto', $a['producto_id']) }}"
                                class="relative inline-flex items-center justify-center px-4 py-2 border rounded-md text-sm font-medium transition-colors
                                {{ $a['is_active'] ? 'border-blue-600 ring-2 ring-blue-600 bg-blue-50 text-blue-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50' }}
                                {{ !$a['has_stock'] ? 'opacity-50 line-through' : '' }}">
@@ -232,8 +203,7 @@
                 </div>
                 @endif
 
-                <!-- Botones de Accion -->
-                <div class="mt-6 mb-6 flex flex-col gap-3">
+                <div class="mt-auto flex flex-col gap-3">
                     <button id="btn-agregar-carrito" data-producto-id="{{ $producto->id }}"
                             {{ $producto->stock <= 0 ? 'disabled' : '' }}
                             class="w-full {{ $producto->stock <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800' }} text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-lg transition transform {{ $producto->stock > 0 ? 'hover:shadow-lg active:scale-95' : '' }}">
@@ -264,33 +234,76 @@
                         $urlWs = "https://wa.me/573004060632?text=" . rawurlencode($mensajeWs);
                     @endphp
                     <a href="{{ $urlWs }}" target="_blank" class="w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold px-6 md:px-8 py-3 md:py-4 rounded-lg transition transform hover:shadow-lg active:scale-95 flex items-center justify-center gap-2">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
                         Comprar por WhatsApp
                     </a>
                 </div>
+            </div>
+        </div>
 
-                <!-- Descripcion -->
+        {{-- 3. CHARACTERISTICS + DESCRIPTION --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 md:mb-12">
+            @if($producto->caracteristicas)
+                <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-lg text-gray-800 mb-4 border-b pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        Características Principales
+                    </h3>
+                    <ul class="space-y-2">
+                        @foreach(explode("\n", $producto->caracteristicas) as $caracteristica)
+                            @if(trim($caracteristica) !== '')
+                                <li class="flex items-start gap-2 text-sm md:text-base text-gray-700">
+                                    <span class="text-blue-500 mt-0.5 shrink-0">✓</span>
+                                    <span>{{ trim($caracteristica) }}</span>
+                                </li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <div class="flex flex-col gap-6">
                 @if($producto->descripcion)
-                    <div class="mb-4 md:mb-6 text-sm md:text-base text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg">
-                        <p class="font-semibold text-gray-800 mb-2">Descripción</p>
-                        <p>{{ $producto->descripcion }}</p>
+                    <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h3 class="font-bold text-lg text-gray-800 mb-3 border-b pb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Descripción
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed text-sm md:text-base">{{ $producto->descripcion }}</p>
                     </div>
                 @endif
 
-                <!-- Informacion adicional -->
-                <div class="mt-6 md:mt-8 pt-6 md:pt-8 border-t border-gray-200 text-xs md:text-sm text-gray-600">
-                    <p class="mb-2">✓ Envío rápido a todo el país</p>
-                    <p class="mb-2">✓ Garantía incluida</p>
-                    <p>✓ Soporte 24/7 disponible</p>
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-5 md:p-6 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Información Adicional
+                    </h3>
+                    <ul class="space-y-2.5 text-sm md:text-base text-gray-700">
+                        <li class="flex items-center gap-2">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center shrink-0 text-xs font-bold">✓</span>
+                            Envío rápido a todo el país
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center shrink-0 text-xs font-bold">✓</span>
+                            Garantía incluida
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center shrink-0 text-xs font-bold">✓</span>
+                            Soporte 24/7 disponible
+                        </li>
+                    </ul>
                 </div>
             </div>
-
         </div>
 
+        {{-- 4. RECOMMENDATIONS --}}
         @if($recomendados && $recomendados->count() > 0)
-        <div class="mt-12 pt-8 border-t border-gray-200 w-full">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">También te puede interesar</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <div class="mb-8 md:mb-12 pt-8 border-t border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
+                También te puede interesar
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
                 @foreach($recomendados as $rec)
                 <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col">
                     <div class="relative overflow-hidden bg-gray-100 aspect-square">
@@ -318,19 +331,21 @@
         </div>
         @endif
 
-        <!-- Sección de Comentarios (Ancho Completo) -->
-        <div class="mt-12 pt-8 border-t border-gray-200 w-full">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Opiniones del Producto</h2>
+        {{-- 5. COMMENTS --}}
+        <div class="pt-8 border-t border-gray-200 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                Opiniones del Producto
+            </h2>
 
             @auth
-                <!-- Formulario para agregar reseña -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
+                <div class="bg-white p-5 md:p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
                     <h3 class="text-lg font-semibold text-gray-700 mb-4">Deja tu opinión</h3>
                     <form action="{{ route('tienda.producto.resena', $producto->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Calificación</label>
-                            <div class="flex gap-4">
+                            <div class="flex flex-wrap gap-2 md:gap-4">
                                 @for($i = 5; $i >= 1; $i--)
                                     <label class="cursor-pointer flex items-center gap-1 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200 hover:bg-blue-50 transition">
                                         <input type="radio" name="calificacion" value="{{ $i }}" {{ $i == 5 ? 'checked' : '' }} class="text-blue-600 focus:ring-blue-500">
@@ -361,14 +376,13 @@
                 </div>
             @endauth
 
-            <!-- Lista de reseñas -->
             @if($producto->testimonios && $producto->testimonios->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach($producto->testimonios as $testimonio)
                         <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-sm">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
                                         {{ strtoupper(substr($testimonio->usuario->nombres, 0, 1)) }}
                                     </div>
                                     <div>
@@ -405,7 +419,6 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmación al agregar al carrito -->
     <div id="modal-carrito" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden transform transition-all duration-300 scale-95">
             <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-4 flex items-center gap-3">

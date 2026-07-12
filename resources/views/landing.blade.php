@@ -137,7 +137,7 @@
 <!-- Categorias -->
 <div id="contentCards" class="pb-10 overflow-hidden">
     <!-- Carta 1 -->
-    <section class="min-h-screen md:min-h-[90vh] flex justify-center items-center py-10 px-4">
+    <section class="min-h-[50vh] md:min-h-[90vh] flex justify-center items-center py-6 md:py-10 px-4">
         <a href="{{ route('tienda') }}?tipo=nuevo" class="card-anim w-full max-w-5xl min-h-[50vh] md:h-[65vh] rounded-3xl md:rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.06)] bg-white/90 backdrop-blur-md flex flex-col justify-center px-6 md:px-20 hover:scale-[1.02] hover:shadow-[0_40px_80px_rgba(37,99,235,0.15)] transition-all duration-[600ms] relative overflow-hidden group border border-white/50">
             <div class="absolute -right-32 -top-32 w-[400px] md:w-[500px] h-[400px] md:h-[500px] bg-blue-100 rounded-full blur-[80px] opacity-60 group-hover:bg-blue-200 transition-colors duration-500"></div>
             <h2 class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-blue-600 mb-3 md:mb-6 leading-tight z-10 relative drop-shadow-sm tracking-tight">Dispositivos<br>Nuevos</h2>
@@ -146,7 +146,7 @@
     </section>
 
     <!-- Carta 2 -->
-    <section class="min-h-screen md:min-h-[90vh] flex justify-center items-center py-10 px-4">
+    <section class="min-h-[50vh] md:min-h-[90vh] flex justify-center items-center py-6 md:py-10 px-4">
         <a href="{{ route('tienda') }}?tipo=usado" class="card-anim w-full max-w-5xl min-h-[50vh] md:h-[65vh] rounded-3xl md:rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.06)] bg-white/90 backdrop-blur-md flex flex-col justify-center px-6 md:px-20 hover:scale-[1.02] hover:shadow-[0_40px_80px_rgba(34,197,94,0.15)] transition-all duration-[600ms] relative overflow-hidden group border border-white/50">
             <div class="absolute -left-32 -bottom-32 w-[400px] md:w-[500px] h-[400px] md:h-[500px] bg-green-100 rounded-full blur-[80px] opacity-60 group-hover:bg-green-200 transition-colors duration-500"></div>
             <h2 class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-green-600 mb-3 md:mb-6 leading-tight z-10 relative drop-shadow-sm tracking-tight">Dispositivos<br>Usados</h2>
@@ -155,7 +155,7 @@
     </section>
 
     <!-- Carta 3 -->
-    <section class="min-h-screen md:min-h-[90vh] flex justify-center items-center py-10 px-4">
+    <section class="min-h-[50vh] md:min-h-[90vh] flex justify-center items-center py-6 md:py-10 px-4">
         <a href="{{ route('servicios.create') }}" class="card-anim w-full max-w-5xl min-h-[50vh] md:h-[65vh] rounded-3xl md:rounded-[40px] shadow-[0_20px_60px_rgba(0,0,0,0.06)] bg-white/90 backdrop-blur-md flex flex-col justify-center px-6 md:px-20 hover:scale-[1.02] hover:shadow-[0_40px_80px_rgba(249,115,22,0.15)] transition-all duration-[600ms] relative overflow-hidden group border border-white/50">
             <div class="absolute left-1/2 -top-40 w-[500px] md:w-[600px] h-[500px] md:h-[600px] bg-orange-100 rounded-full blur-[100px] opacity-60 group-hover:bg-orange-200 transition-colors duration-500 -translate-x-1/2"></div>
             <h2 class="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-orange-500 mb-3 md:mb-6 leading-tight z-10 relative drop-shadow-sm tracking-tight text-center">Servicio<br>Técnico</h2>

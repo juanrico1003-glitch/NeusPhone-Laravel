@@ -226,7 +226,7 @@
             💬
         </button>
         <!-- Ventana del chatbot -->
-        <div x-show="open" x-transition class="absolute bottom-20 right-0 w-96 h-[550px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border">
+        <div x-show="open" x-transition @click.away="open = false" class="absolute bottom-20 right-0 w-[calc(100vw-2rem)] sm:w-96 h-[60vh] sm:h-[550px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border">
             <!-- Encabezado del chatbot -->
             <div class="bg-blue-600 text-white p-4 flex items-center justify-between">
                 <div>
